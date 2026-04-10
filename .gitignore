@@ -30,3 +30,8 @@ node_modules/
 pipeline/data/
 pipeline/audio/
 pipeline/transcripts/
+
+# Cookies (never commit)
+*.txt
+cookies.txt
+*.cookies
