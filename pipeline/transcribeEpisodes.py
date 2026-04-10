@@ -1,13 +1,13 @@
-# Transcribes all downloaded MP3s using faster-whisper (local, free, CPU-based).
+# Transcribes all downloaded MP3s using mlx-whisper (Apple MLX, M-series GPU).
 # Outputs one JSON file per episode to transcripts/ named by youtubeID.
 # Safe to pause and re-run — already transcribed episodes are skipped.
-# Requires: pip install faster-whisper
-# Model: large-v3, runs on CPU (avoids MPS float64 incompatibility on Apple Silicon).
+# Requires: pip install mlx-whisper
+# Model: mlx-community/whisper-large-v3-turbo (distilled large-v3, ~8x faster, M-series GPU)
 
 import json
 import time
 from pathlib import Path
-from faster_whisper import WhisperModel
+import mlx_whisper
 
 audioDir = Path(__file__).parent / "audio"
 transcriptsDir = Path(__file__).parent / "transcripts"
@@ -15,12 +15,13 @@ episodesFile = Path(__file__).parent / "data" / "episodes.json"
 logFile = Path(__file__).parent / "data" / "transcriptLog.json"
 transcriptsDir.mkdir(parents=True, exist_ok=True)
 
+MODEL = "mlx-community/whisper-large-v3-turbo"
+
 with open(episodesFile) as f:
     episodes = json.load(f)
 
-print("Loading faster-whisper large-v3 model (downloads on first run)...")
-model = WhisperModel("large-v3", device="cpu", compute_type="int8")
-print("Model loaded.\n")
+print(f"Using mlx-whisper model: {MODEL}")
+print("Model will be downloaded on first run.\n")
 
 failed = []
 skipped = []
@@ -46,21 +47,22 @@ for i, episode in enumerate(episodes, 1):
     startTime = time.time()
 
     try:
-        segments, info = model.transcribe(
+        result = mlx_whisper.transcribe(
             str(audioFile),
-            language="en",
+            path_or_hf_repo=MODEL,
             word_timestamps=True,
+            language="en",
         )
 
         outputSegments = []
         fullText = []
-        for seg in segments:
+        for seg in result["segments"]:
             outputSegments.append({
-                "start": round(seg.start, 2),
-                "end": round(seg.end, 2),
-                "text": seg.text.strip(),
+                "start": round(seg["start"], 2),
+                "end": round(seg["end"], 2),
+                "text": seg["text"].strip(),
             })
-            fullText.append(seg.text.strip())
+            fullText.append(seg["text"].strip())
 
         output = {
             "youtubeID": youtubeID,
