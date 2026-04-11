@@ -7,11 +7,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 
-load_dotenv()
+load_dotenv(Path(__file__).parent.parent / ".env")
 
 youtubeApiKey = os.getenv("YOUTUBE_API_KEY")
 channelHandle = "@POF_POD"
-outputFile = Path(__file__).parent / "data" / "episodes.json"
+outputFile = Path(__file__).parent.parent / "data" / "episodes.json"
 
 
 def getChannelID(youtube, handle: str) -> str:
@@ -107,7 +107,7 @@ def main():
 
     print("Fetching video list...")
     videos = fetchAllVideos(youtube, playlistID)
-    print(f"Found {len(videos)} videos. Fetching durations...") # should be 91?
+    print(f"Found {len(videos)} videos. Fetching durations...")
 
     videos = fetchVideoDurations(youtube, videos)
 

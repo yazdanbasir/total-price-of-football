@@ -9,10 +9,10 @@ import time
 from pathlib import Path
 import mlx_whisper
 
-audioDir = Path(__file__).parent / "audio"
-transcriptsDir = Path(__file__).parent / "transcripts"
-episodesFile = Path(__file__).parent / "data" / "episodes.json"
-logFile = Path(__file__).parent / "data" / "transcriptLog.json"
+audioDir = Path(__file__).parent.parent / "audio"
+transcriptsDir = Path(__file__).parent.parent / "transcripts"
+episodesFile = Path(__file__).parent.parent / "data" / "episodes.json"
+logFile = Path(__file__).parent.parent / "data" / "transcriptLog.json"
 transcriptsDir.mkdir(parents=True, exist_ok=True)
 
 MODEL = "mlx-community/whisper-large-v3-turbo"

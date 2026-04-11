@@ -35,11 +35,11 @@ total-price-of-football/
 - **Scraping:** YouTube Data API v3 + yt-dlp
 
 ## Pipeline Scripts (run in order)
-1. `fetchEpisodes.py` — fetches episode metadata from YouTube, outputs `data/episodes.json`
-2. `downloadAudio.py` — downloads MP3s to `audio/`, logs to `data/downloadLog.json`
-3. `transcribeEpisodes.py` — transcribes audio using mlx-whisper, outputs `transcripts/{youtubeID}.json`
-4. `analyzeEpisodes.py` — extracts concepts/profiles/stories via Claude Haiku, outputs `analysis/{youtubeID}.json`
-5. `aggregateAnalysis.py` — merges all analysis files into `data/concepts.json`, `data/profiles.json`, `data/stories.json`
+1. `scrape/fetchEpisodes.py` — fetches episode metadata from YouTube, outputs `data/episodes.json`
+2. `scrape/downloadAudio.py` — downloads MP3s to `audio/`, logs to `data/downloadLog.json`
+3. `transcribe/transcribeEpisodes.py` — transcribes audio using mlx-whisper, outputs `transcripts/{youtubeID}.json`
+4. `analyze/analyzeEpisodes.py` — extracts concepts/profiles/stories via Claude Haiku, outputs `analysis/{youtubeID}.json`
+5. `analyze/aggregateAnalysis.py` — merges all analysis files into `data/concepts.json`, `data/profiles.json`, `data/stories.json`
 
 All pipeline scripts are skip-safe: re-running skips already-completed episodes.
 

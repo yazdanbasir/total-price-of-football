@@ -9,9 +9,9 @@ import yt_dlp
 
 os.environ["PATH"] = f"/usr/local/bin:{os.environ.get('PATH', '')}"
 
-episodesFile = Path(__file__).parent / "data" / "episodes.json"
-audioDir = Path(__file__).parent / "audio"
-logFile = Path(__file__).parent / "data" / "downloadLog.json"
+episodesFile = Path(__file__).parent.parent / "data" / "episodes.json"
+audioDir = Path(__file__).parent.parent / "audio"
+logFile = Path(__file__).parent.parent / "data" / "downloadLog.json"
 audioDir.mkdir(parents=True, exist_ok=True)
 
 with open(episodesFile) as f:

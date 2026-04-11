@@ -13,12 +13,12 @@ import anthropic
 from dotenv import load_dotenv
 from json_repair import repair_json
 
-load_dotenv(Path(__file__).parent / ".env")
+load_dotenv(Path(__file__).parent.parent / ".env")
 
-transcriptsDir = Path(__file__).parent / "transcripts"
-analysisDir = Path(__file__).parent / "analysis"
-episodesFile = Path(__file__).parent / "data" / "episodes.json"
-logFile = Path(__file__).parent / "data" / "analysisLog.json"
+transcriptsDir = Path(__file__).parent.parent / "transcripts"
+analysisDir = Path(__file__).parent.parent / "analysis"
+episodesFile = Path(__file__).parent.parent / "data" / "episodes.json"
+logFile = Path(__file__).parent.parent / "data" / "analysisLog.json"
 analysisDir.mkdir(parents=True, exist_ok=True)
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")

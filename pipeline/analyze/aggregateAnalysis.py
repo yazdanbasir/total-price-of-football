@@ -1,14 +1,14 @@
 # Merges all per-episode analysis files into three unified datasets.
 # Outputs to pipeline/data/concepts.json, profiles.json, stories.json.
 # Cross-references mentions across all 91 episodes for each concept and profile.
-# Run after analyzeEpisodes.py has completed
+# Run after analyzeEpisodes.py has completed.
 
 import json
 from collections import defaultdict
 from pathlib import Path
 
-analysisDir = Path(__file__).parent / "analysis"
-dataDir = Path(__file__).parent / "data"
+analysisDir = Path(__file__).parent.parent / "analysis"
+dataDir = Path(__file__).parent.parent / "data"
 
 analysisFiles = sorted(analysisDir.glob("*.json"))
 print(f"Found {len(analysisFiles)} analysis files to aggregate.\n")
