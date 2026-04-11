@@ -9,6 +9,7 @@ from pathlib import Path
 
 import psycopg2
 from dotenv import load_dotenv
+from tqdm import tqdm
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
@@ -42,9 +43,8 @@ def bestDefinition(definitions: list) -> str | None:
 
 
 # --- Episodes ---
-print(f"Inserting {len(episodes)} episodes...")
 cur.execute("DELETE FROM episodes;")
-for ep in episodes:
+for ep in tqdm(episodes, desc="Episodes", unit="ep"):
     cur.execute("""
         INSERT INTO episodes (youtube_id, title, published_at, duration, thumbnail, description)
         VALUES (%s, %s, %s, %s, %s, %s)
@@ -57,69 +57,77 @@ for ep in episodes:
         ep.get("thumbnail"),
         ep.get("description"),
     ))
-
 conn.commit()
-print(f"  Done.")
 
 # --- Concepts ---
-print(f"Inserting {len(concepts)} concepts...")
 cur.execute("DELETE FROM concept_mentions;")
 cur.execute("DELETE FROM concepts;")
 
-for concept in concepts:
-    term = concept["term"]
-    definition = bestDefinition(concept.get("definitions", []))
+with tqdm(total=len(concepts), desc="Concepts", unit="concept") as bar:
+    mentionCount = 0
+    for concept in concepts:
+        term = concept["term"]
+        definition = bestDefinition(concept.get("definitions", []))
 
-    cur.execute("""
-        INSERT INTO concepts (term, definition)
-        VALUES (%s, %s)
-        ON CONFLICT (term) DO UPDATE SET definition = EXCLUDED.definition
-        RETURNING id;
-    """, (term, definition))
-
-    conceptID = cur.fetchone()[0]
-
-    for mention in concept.get("episodes", []):
         cur.execute("""
-            INSERT INTO concept_mentions (concept_id, episode_id, timestamp)
-            VALUES (%s, %s, %s);
-        """, (conceptID, mention["youtubeID"], mention.get("timestamp")))
+            INSERT INTO concepts (term, definition)
+            VALUES (%s, %s)
+            ON CONFLICT (term) DO UPDATE SET definition = EXCLUDED.definition
+            RETURNING id;
+        """, (term, definition))
+
+        conceptID = cur.fetchone()[0]
+
+        for mention in concept.get("episodes", []):
+            cur.execute("""
+                INSERT INTO concept_mentions (concept_id, episode_id, timestamp)
+                VALUES (%s, %s, %s);
+            """, (conceptID, mention["youtubeID"], mention.get("timestamp")))
+            mentionCount += 1
+
+        bar.update(1)
+        bar.set_postfix(mentions=mentionCount)
 
 conn.commit()
-print(f"  Done.")
 
 # --- Profiles ---
-print(f"Inserting {len(profiles)} profiles...")
 cur.execute("DELETE FROM profile_mentions;")
 cur.execute("DELETE FROM profiles;")
 
-for profile in profiles:
-    name = profile["name"]
-    description = bestDefinition(profile.get("descriptions", []))
+with tqdm(total=len(profiles), desc="Profiles", unit="profile") as bar:
+    mentionCount = 0
+    for profile in profiles:
+        name = profile["name"]
+        description = bestDefinition(profile.get("descriptions", []))
 
-    cur.execute("""
-        INSERT INTO profiles (name, type, description)
-        VALUES (%s, %s, %s)
-        ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description
-        RETURNING id;
-    """, (name, profile.get("type"), description))
-
-    profileID = cur.fetchone()[0]
-
-    for mention in profile.get("episodes", []):
         cur.execute("""
-            INSERT INTO profile_mentions (profile_id, episode_id, timestamp)
-            VALUES (%s, %s, %s);
-        """, (profileID, mention["youtubeID"], mention.get("timestamp")))
+            INSERT INTO profiles (name, type, description)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description
+            RETURNING id;
+        """, (name, profile.get("type"), description))
+
+        profileID = cur.fetchone()[0]
+
+        for mention in profile.get("episodes", []):
+            cur.execute("""
+                INSERT INTO profile_mentions (profile_id, episode_id, timestamp)
+                VALUES (%s, %s, %s);
+            """, (profileID, mention["youtubeID"], mention.get("timestamp")))
+            mentionCount += 1
+
+        bar.update(1)
+        bar.set_postfix(mentions=mentionCount)
 
 conn.commit()
-print(f"  Done.")
 
 # --- Stories ---
-print(f"Inserting {len(stories)} stories...")
 cur.execute("DELETE FROM stories;")
 
-for story in stories:
+for story in tqdm(stories, desc="Stories ", unit="story"):
+    timestamp = story.get("timestamp")
+    if isinstance(timestamp, list):
+        timestamp = timestamp[0] if timestamp else None
     cur.execute("""
         INSERT INTO stories (episode_id, headline, summary, timestamp)
         VALUES (%s, %s, %s, %s);
@@ -127,12 +135,10 @@ for story in stories:
         story["youtubeID"],
         story.get("headline"),
         story.get("summary"),
-        story.get("timestamp"),
+        timestamp,
     ))
 
 conn.commit()
-print(f"  Done.")
-
 cur.close()
 conn.close()
 
