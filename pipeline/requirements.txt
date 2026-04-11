@@ -4,3 +4,5 @@ yt-dlp[default]
 mlx-whisper
 anthropic
 json-repair
+psycopg2-binary
+sentence-transformers
