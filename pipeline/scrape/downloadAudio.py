@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import yt_dlp
+from tqdm import tqdm
 
 os.environ["PATH"] = f"/usr/local/bin:{os.environ.get('PATH', '')}"
 
@@ -42,51 +43,60 @@ def getBestAudioFormatID(url: str) -> str | None:
 
 skipped = []
 failed = []
+downloaded = 0
 
-total = len(episodes)
-for i, episode in enumerate(episodes, 1):
-    youtubeID = episode["youtubeID"]
-    title = episode["title"]
+with tqdm(total=len(episodes), desc="Episodes", unit="ep") as bar:
+    for episode in episodes:
+        youtubeID = episode["youtubeID"]
+        title = episode["title"]
+        shortTitle = title[:50]
 
-    if isAlreadyDownloaded(youtubeID):
-        print(f"[{i}/{total}] Skipping (already downloaded): {title}")
-        continue
+        if isAlreadyDownloaded(youtubeID):
+            bar.set_postfix(status="skip", ep=shortTitle)
+            skipped.append({"youtubeID": youtubeID, "title": title, "reason": "already downloaded"})
+            bar.update(1)
+            continue
 
-    url = f"https://www.youtube.com/watch?v={youtubeID}"
-    print(f"[{i}/{total}] Checking formats: {title}")
+        url = f"https://www.youtube.com/watch?v={youtubeID}"
+        bar.set_postfix(status="checking", ep=shortTitle)
 
-    try:
-        formatID = getBestAudioFormatID(url)
-    except Exception as e:
-        print(f"[{i}/{total}] SKIPPED (format check failed): {title} — {e}")
-        skipped.append({"youtubeID": youtubeID, "title": title, "reason": f"format check failed: {e}"})
-        continue
+        try:
+            formatID = getBestAudioFormatID(url)
+        except Exception as e:
+            tqdm.write(f"SKIPPED (format check failed): {title} — {e}")
+            skipped.append({"youtubeID": youtubeID, "title": title, "reason": f"format check failed: {e}"})
+            bar.update(1)
+            continue
 
-    if not formatID:
-        print(f"[{i}/{total}] SKIPPED (no audio available): {title}")
-        skipped.append({"youtubeID": youtubeID, "title": title, "reason": "no audio format available"})
-        continue
+        if not formatID:
+            tqdm.write(f"SKIPPED (no audio available): {title}")
+            skipped.append({"youtubeID": youtubeID, "title": title, "reason": "no audio format available"})
+            bar.update(1)
+            continue
 
-    print(f"[{i}/{total}] Downloading: {title}")
-    try:
-        with yt_dlp.YoutubeDL({
-            **baseOptions,
-            "format": formatID,
-            "outtmpl": str(audioDir / "%(id)s.%(ext)s"),
-            "postprocessors": [{
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": "128",
-            }],
-        }) as ydl:
-            ydl.download([url])
-        print(f"[{i}/{total}] Done: {youtubeID}.mp3")
-    except Exception as e:
-        print(f"[{i}/{total}] FAILED: {title} — {e}")
-        failed.append({"youtubeID": youtubeID, "title": title, "reason": str(e)})
+        bar.set_postfix(status="downloading", ep=shortTitle)
+        try:
+            with yt_dlp.YoutubeDL({
+                **baseOptions,
+                "format": formatID,
+                "outtmpl": str(audioDir / "%(id)s.%(ext)s"),
+                "postprocessors": [{
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "128",
+                }],
+            }) as ydl:
+                ydl.download([url])
+            downloaded += 1
+            tqdm.write(f"Downloaded: {title}")
+        except Exception as e:
+            tqdm.write(f"FAILED: {title} — {e}")
+            failed.append({"youtubeID": youtubeID, "title": title, "reason": str(e)})
+
+        bar.update(1)
 
 with open(logFile, "w") as f:
     json.dump({"skipped": skipped, "failed": failed}, f, indent=2)
 
-print(f"\nAll done. {total - len(skipped) - len(failed)} downloaded, {len(skipped)} skipped, {len(failed)} failed.")
+print(f"\nAll done. {downloaded} downloaded, {len(skipped)} skipped, {len(failed)} failed.")
 print(f"See {logFile} for details.")

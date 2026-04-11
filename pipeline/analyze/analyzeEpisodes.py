@@ -12,6 +12,7 @@ from pathlib import Path
 import anthropic
 from dotenv import load_dotenv
 from json_repair import repair_json
+from tqdm import tqdm
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
@@ -72,7 +73,6 @@ def parseResponse(rawText: str) -> dict:
     """Parse model response as JSON, falling back to json_repair on failure."""
     rawText = rawText.strip()
 
-    # Strip markdown code fences if present
     if rawText.startswith("```"):
         rawText = rawText.split("```")[1]
         if rawText.startswith("json"):
@@ -98,7 +98,6 @@ Transcript:
 
     messages = [{"role": "user", "content": userMessage}]
 
-    # On retry, prime the assistant with the opening brace to force clean JSON
     if retry:
         messages.append({"role": "assistant", "content": "{"})
 
@@ -121,64 +120,81 @@ with open(episodesFile) as f:
 
 failed = []
 skipped = []
-total = len(episodes)
+done = 0
+totalTime = 0
 
-print(f"Analyzing {total} episodes with {MODEL}...\n")
+print(f"Analyzing episodes with {MODEL}...\n")
 
-for i, episode in enumerate(episodes, 1):
-    youtubeID = episode["youtubeID"]
-    title = episode["title"]
-    outputFile = analysisDir / f"{youtubeID}.json"
+with tqdm(total=len(episodes), desc="Episodes", unit="ep") as bar:
+    for episode in episodes:
+        youtubeID = episode["youtubeID"]
+        title = episode["title"]
+        shortTitle = title[:50]
+        outputFile = analysisDir / f"{youtubeID}.json"
 
-    if outputFile.exists():
-        print(f"[{i}/{total}] Skipping (already analyzed): {title}")
-        skipped.append(youtubeID)
-        continue
+        if outputFile.exists():
+            skipped.append(youtubeID)
+            bar.set_postfix(status="skip", ep=shortTitle)
+            bar.update(1)
+            continue
 
-    transcriptFile = transcriptsDir / f"{youtubeID}.json"
-    if not transcriptFile.exists():
-        print(f"[{i}/{total}] SKIPPED (no transcript): {title}")
-        failed.append({"youtubeID": youtubeID, "title": title, "reason": "transcript not found"})
-        continue
+        transcriptFile = transcriptsDir / f"{youtubeID}.json"
+        if not transcriptFile.exists():
+            tqdm.write(f"SKIPPED (no transcript): {title}")
+            failed.append({"youtubeID": youtubeID, "title": title, "reason": "transcript not found"})
+            bar.update(1)
+            continue
 
-    with open(transcriptFile) as f:
-        transcript = json.load(f)
+        with open(transcriptFile) as f:
+            transcript = json.load(f)
 
-    print(f"[{i}/{total}] Analyzing: {title}")
-    startTime = time.time()
+        bar.set_postfix(status="analyzing", ep=shortTitle)
+        startTime = time.time()
 
-    try:
         try:
-            extracted = analyzeEpisode(episode, transcript)
-        except (json.JSONDecodeError, ValueError):
-            print(f"[{i}/{total}] JSON error — retrying with forced JSON prefix...")
-            time.sleep(1)
-            extracted = analyzeEpisode(episode, transcript, retry=True)
+            try:
+                extracted = analyzeEpisode(episode, transcript)
+            except (json.JSONDecodeError, ValueError):
+                tqdm.write(f"JSON error — retrying: {title}")
+                time.sleep(1)
+                extracted = analyzeEpisode(episode, transcript, retry=True)
 
-        output = {
-            "youtubeID": youtubeID,
-            "title": title,
-            "publishedAt": episode["publishedAt"],
-            **extracted,
-        }
+            output = {
+                "youtubeID": youtubeID,
+                "title": title,
+                "publishedAt": episode["publishedAt"],
+                **extracted,
+            }
 
-        with open(outputFile, "w") as f:
-            json.dump(output, f, indent=2, ensure_ascii=False)
+            with open(outputFile, "w") as f:
+                json.dump(output, f, indent=2, ensure_ascii=False)
 
-        elapsed = time.time() - startTime
-        conceptCount = len(extracted.get("concepts", []))
-        profileCount = len(extracted.get("profiles", []))
-        storyCount = len(extracted.get("stories", []))
-        print(f"[{i}/{total}] Done in {elapsed:.0f}s — {conceptCount} concepts, {profileCount} profiles, {storyCount} stories")
+            elapsed = time.time() - startTime
+            done += 1
+            totalTime += elapsed
+            avgTime = totalTime / done
+            remaining = len(episodes) - (done + len(skipped) + len(failed))
+            eta = int(avgTime * remaining)
 
-        # Avoid rate limiting
-        time.sleep(0.5)
+            conceptCount = len(extracted.get("concepts", []))
+            profileCount = len(extracted.get("profiles", []))
+            storyCount = len(extracted.get("stories", []))
+            tqdm.write(f"Done in {elapsed:.0f}s — {conceptCount} concepts, {profileCount} profiles, {storyCount} stories: {title[:60]}")
+            bar.set_postfix(
+                status="done",
+                avg=f"{avgTime:.0f}s/ep",
+                eta=f"{eta//60}m{eta%60:02d}s"
+            )
 
-    except Exception as e:
-        print(f"[{i}/{total}] FAILED: {title} — {e}")
-        failed.append({"youtubeID": youtubeID, "title": title, "reason": str(e)})
+            time.sleep(0.5)
+
+        except Exception as e:
+            tqdm.write(f"FAILED: {title} — {e}")
+            failed.append({"youtubeID": youtubeID, "title": title, "reason": str(e)})
+
+        bar.update(1)
 
 with open(logFile, "w") as f:
     json.dump({"skipped": len(skipped), "failed": len(failed), "failedEpisodes": failed}, f, indent=2)
 
-print(f"\nDone. {total - len(skipped) - len(failed)} analyzed, {len(skipped)} skipped, {len(failed)} failed.")
+print(f"\nDone. {done} analyzed, {len(skipped)} skipped, {len(failed)} failed.")
