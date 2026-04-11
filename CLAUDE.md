@@ -29,12 +29,26 @@ total-price-of-football/
 - **Frontend:** React on Vercel
 - **Backend:** Python FastAPI on Railway
 - **Database:** PostgreSQL + pgvector on Railway
-- **Transcription:** OpenAI Whisper (local)
-- **LLM — bulk analysis:** Claude Haiku
+- **Transcription:** mlx-whisper with `mlx-community/whisper-large-v3-turbo` (Apple MLX, M-series GPU — do NOT use openai-whisper or faster-whisper, both have MPS float64 issues on Apple Silicon)
+- **LLM — bulk analysis:** Claude Haiku (`claude-haiku-4-5-20251001`)
 - **LLM — chatbot:** Claude Sonnet
 - **Scraping:** YouTube Data API v3 + yt-dlp
 
+## Pipeline Scripts (run in order)
+1. `fetchEpisodes.py` — fetches episode metadata from YouTube, outputs `data/episodes.json`
+2. `downloadAudio.py` — downloads MP3s to `audio/`, logs to `data/downloadLog.json`
+3. `transcribeEpisodes.py` — transcribes audio using mlx-whisper, outputs `transcripts/{youtubeID}.json`
+4. `analyzeEpisodes.py` — extracts concepts/profiles/stories via Claude Haiku, outputs `analysis/{youtubeID}.json`
+5. `aggregateAnalysis.py` — merges all analysis files into `data/concepts.json`, `data/profiles.json`, `data/stories.json`
+
+All pipeline scripts are skip-safe: re-running skips already-completed episodes.
+
 ## Pipeline Data Directories (gitignored)
-- `pipeline/data/` — JSON metadata files
+- `pipeline/data/` — JSON metadata and aggregated output files
 - `pipeline/audio/` — downloaded MP3 files
-- `pipeline/transcripts/` — Whisper transcript output
+- `pipeline/transcripts/` — transcript JSON files (one per episode)
+- `pipeline/analysis/` — per-episode analysis JSON files (one per episode)
+
+## API Cost Notes
+- Claude Haiku analysis of all 91 episodes costs ~$3.60 (not $0.80 as initially estimated — transcripts are large)
+- Always estimate conservatively and err on the side of higher cost estimates

@@ -36,3 +36,6 @@ pipeline/analysis/
 *.txt
 cookies.txt
 *.cookies
+
+# Claude Code
+CLAUDE.md

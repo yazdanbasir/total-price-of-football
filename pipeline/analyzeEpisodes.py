@@ -11,6 +11,7 @@ from pathlib import Path
 
 import anthropic
 from dotenv import load_dotenv
+from json_repair import repair_json
 
 load_dotenv(Path(__file__).parent / ".env")
 
@@ -67,7 +68,25 @@ def formatTranscript(segments: list) -> str:
     return "\n".join(lines)
 
 
-def analyzeEpisode(episode: dict, transcript: dict) -> dict:
+def parseResponse(rawText: str) -> dict:
+    """Parse model response as JSON, falling back to json_repair on failure."""
+    rawText = rawText.strip()
+
+    # Strip markdown code fences if present
+    if rawText.startswith("```"):
+        rawText = rawText.split("```")[1]
+        if rawText.startswith("json"):
+            rawText = rawText[4:]
+    rawText = rawText.strip()
+
+    try:
+        return json.loads(rawText)
+    except json.JSONDecodeError:
+        repaired = repair_json(rawText)
+        return json.loads(repaired)
+
+
+def analyzeEpisode(episode: dict, transcript: dict, retry: bool = False) -> dict:
     """Send transcript to Claude Haiku and return extracted structured data."""
     formattedTranscript = formatTranscript(transcript["segments"])
 
@@ -77,23 +96,24 @@ Published: {episode['publishedAt'][:10]}
 Transcript:
 {formattedTranscript}"""
 
+    messages = [{"role": "user", "content": userMessage}]
+
+    # On retry, prime the assistant with the opening brace to force clean JSON
+    if retry:
+        messages.append({"role": "assistant", "content": "{"})
+
     response = client.messages.create(
         model=MODEL,
         max_tokens=8192,
         system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": userMessage}],
+        messages=messages,
     )
 
     rawText = response.content[0].text.strip()
+    if retry:
+        rawText = "{" + rawText
 
-    # Strip markdown code fences if present
-    if rawText.startswith("```"):
-        rawText = rawText.split("```")[1]
-        if rawText.startswith("json"):
-            rawText = rawText[4:]
-    rawText = rawText.strip()
-
-    return json.loads(rawText)
+    return parseResponse(rawText)
 
 
 with open(episodesFile) as f:
@@ -128,7 +148,12 @@ for i, episode in enumerate(episodes, 1):
     startTime = time.time()
 
     try:
-        extracted = analyzeEpisode(episode, transcript)
+        try:
+            extracted = analyzeEpisode(episode, transcript)
+        except (json.JSONDecodeError, ValueError):
+            print(f"[{i}/{total}] JSON error — retrying with forced JSON prefix...")
+            time.sleep(1)
+            extracted = analyzeEpisode(episode, transcript, retry=True)
 
         output = {
             "youtubeID": youtubeID,
@@ -149,9 +174,6 @@ for i, episode in enumerate(episodes, 1):
         # Avoid rate limiting
         time.sleep(0.5)
 
-    except json.JSONDecodeError as e:
-        print(f"[{i}/{total}] FAILED (JSON parse error): {title} — {e}")
-        failed.append({"youtubeID": youtubeID, "title": title, "reason": f"JSON parse error: {e}"})
     except Exception as e:
         print(f"[{i}/{total}] FAILED: {title} — {e}")
         failed.append({"youtubeID": youtubeID, "title": title, "reason": str(e)})
