@@ -10,7 +10,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-16 py-12">
-      <div className="flex flex-col gap-4 max-w-2xl">
+      <div className="flex flex-col gap-4">
         <h1
           className="text-5xl font-normal leading-tight text-[#111111]"
           style={{ fontFamily: "var(--font-playfair)" }}

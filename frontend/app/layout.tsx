@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Playfair_Display, Barlow_Condensed, Open_Sans } from "next/font/google";
+import SideNav from "@/components/SideNav";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -24,38 +26,28 @@ export const metadata: Metadata = {
   description: "Every financial term, club, and story from the Price of Football podcast.",
 };
 
-function Nav() {
-  return (
-    <header className="sticky top-0 z-50 bg-black border-b-4 border-[#FFE200]">
-      <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link
-          href="/"
-          className="font-black uppercase tracking-tight text-[#FFE200] text-lg leading-none"
-          style={{ fontFamily: "var(--font-barlow)" }}
-        >
-          Total Price of Football
-        </Link>
-        <nav
-          className="flex items-center gap-6 text-xs font-semibold uppercase tracking-widest text-white/70"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        >
-          <Link href="/glossary" className="hover:text-[#FFE200] transition-colors">Glossary</Link>
-          <Link href="/directory" className="hover:text-[#FFE200] transition-colors">Directory</Link>
-          <Link href="/episodes" className="hover:text-[#FFE200] transition-colors">Episodes</Link>
-        </nav>
-      </div>
-    </header>
-  );
-}
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`h-full ${playfair.variable} ${barlow.variable} ${openSans.variable}`}>
       <body className="min-h-full flex flex-col bg-white text-[#464646]" style={{ fontFamily: "var(--font-open-sans)" }}>
-        <Nav />
-        <main className="flex-1 max-w-5xl mx-auto w-full px-6 py-10">
-          {children}
-        </main>
+        {/* Top header */}
+        <header className="sticky top-0 z-50 bg-[#FFE200] border-b-4 border-black">
+          <div className="px-6 h-14 flex items-center">
+            <Link href="/" className="flex items-center">
+              <Image src="/pof_logo.png" alt="Total Price of Football" height={36} width={36} style={{ height: "36px", width: "auto" }} />
+            </Link>
+          </div>
+        </header>
+
+        {/* Body: sidebar + content */}
+        <div className="flex flex-1">
+          <SideNav />
+
+          <main className="flex-1 px-8 py-10 min-w-0">
+            {children}
+          </main>
+        </div>
+
         <footer className="border-t border-[#E8E8E8] text-[#A1A1A1] text-xs text-center py-6">
           A fan project. All content from{" "}
           <a
