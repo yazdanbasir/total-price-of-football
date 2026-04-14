@@ -43,3 +43,12 @@ CLAUDE.md
 CLAUDE.md
 BRANDING.md
 frontend/AGENTS.md
+frontend/skills-lock.json
+
+# impeccable skills
+/.agents
+/.claude
+.windsurf/skills/adapt
+/.windsurf
+skills-lock.json
+.impeccable.md
