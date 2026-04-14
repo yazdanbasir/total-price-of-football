@@ -25,24 +25,24 @@ export default async function EpisodesPage() {
         <p className="text-sm text-[#A1A1A1]">{data.total} episodes</p>
       </div>
 
-      <div className="flex flex-col divide-y divide-[#E8E8E8]">
+      <div className="flex flex-col">
         {data.episodes.map((ep) => (
           <a
             key={ep.youtubeID}
             href={`https://www.youtube.com/watch?v=${ep.youtubeID}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-start gap-4 py-4 hover:bg-[#FFFDE0] -mx-2 px-2 rounded transition-colors group"
+            className="group flex items-center gap-5 py-5 border-b border-[#E8E8E8] -mx-8 px-8 hover:bg-[#FFFDE0] transition-colors"
           >
             {ep.thumbnail && (
               <img
                 src={ep.thumbnail}
                 alt=""
-                className="w-24 h-14 object-cover rounded shrink-0"
+                className="w-28 h-[63px] object-cover shrink-0"
               />
             )}
-            <div className="flex flex-col gap-1 min-w-0">
-              <span className="text-sm font-semibold text-[#111111] line-clamp-2 leading-snug">
+            <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+              <span className="text-sm font-semibold text-[#111111] line-clamp-2 leading-snug group-hover:text-black transition-colors">
                 {ep.title}
               </span>
               <div className="flex items-center gap-2 text-xs text-[#A1A1A1]">
@@ -57,12 +57,15 @@ export default async function EpisodesPage() {
                 )}
                 {ep.duration && (
                   <>
-                    <span>·</span>
+                    <span aria-hidden="true">·</span>
                     <span>{parseDuration(ep.duration)}</span>
                   </>
                 )}
               </div>
             </div>
+            <span className="text-sm text-[#CA9B52] opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+              →
+            </span>
           </a>
         ))}
       </div>
