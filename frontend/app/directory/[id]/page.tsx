@@ -17,34 +17,63 @@ export default async function ProfilePage({
   }
 
   return (
-    <div className="flex flex-col gap-8 max-w-2xl">
-      <div className="flex flex-col gap-1">
-        <Link href="/directory" className="text-xs text-[#A1A1A1] hover:text-[#CA9B52] transition-colors">
-          ← Directory
-        </Link>
-        <div className="flex items-baseline gap-3 mt-2">
-          <h1
-            className="text-3xl font-normal text-[#111111]"
-            style={{ fontFamily: "var(--font-playfair)" }}
-          >
-            {profile.name}
-          </h1>
-          <span className="text-xs text-[#A1A1A1] uppercase tracking-wider">{profile.type}</span>
-        </div>
+    <div className="max-w-6xl mx-auto px-6 py-12">
+
+      <Link
+        href="/directory"
+        className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#444440] hover:text-[#FFE200] transition-colors mb-10"
+        style={{ fontFamily: "var(--font-barlow)" }}
+      >
+        ← Directory
+      </Link>
+
+      <div className="flex items-baseline gap-4 mb-8">
+        <h1
+          className="text-[clamp(36px,5vw,64px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {profile.name}
+        </h1>
+        <span
+          className="text-[10px] font-black uppercase tracking-[0.15em] text-[#444440] border border-[#2A2A2A] px-2 py-1 shrink-0"
+          style={{ fontFamily: "var(--font-barlow)" }}
+        >
+          {profile.type}
+        </span>
       </div>
 
       {profile.description && (
-        <div className="border-l-4 border-[#FFE200] pl-4">
-          <p className="text-[#464646] text-sm leading-relaxed">{profile.description}</p>
+        <div className="bg-[#111111] px-6 py-6 mb-12 max-w-2xl">
+          <p className="text-sm text-[#BDBAB5] leading-[1.8]">
+            {profile.description}
+          </p>
         </div>
       )}
 
-      <div className="flex flex-col gap-3">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-[#A1A1A1]">
-          Mentioned in {profile.mentions.length} episode{profile.mentions.length !== 1 ? "s" : ""}
-        </h2>
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center gap-4">
+          <span
+            className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440]"
+            style={{ fontFamily: "var(--font-barlow)" }}
+          >
+            Mentioned in
+          </span>
+          <span
+            className="text-lg font-black tabular-nums text-[#FFE200] leading-none"
+            style={{ fontFamily: "var(--font-barlow)" }}
+          >
+            {profile.mentions.length}
+          </span>
+          <span
+            className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440]"
+            style={{ fontFamily: "var(--font-barlow)" }}
+          >
+            episode{profile.mentions.length !== 1 ? "s" : ""}
+          </span>
+        </div>
         <MentionList mentions={profile.mentions} />
       </div>
+
     </div>
   );
 }

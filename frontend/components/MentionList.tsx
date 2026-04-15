@@ -9,7 +9,9 @@ type Mention = {
 
 export default function MentionList({ mentions }: { mentions: Mention[] }) {
   if (mentions.length === 0) {
-    return <p className="text-[#A1A1A1] text-sm">No episode mentions recorded.</p>;
+    return (
+      <p className="text-[#444440] py-6">No episode mentions recorded.</p>
+    );
   }
 
   return (
@@ -20,14 +22,17 @@ export default function MentionList({ mentions }: { mentions: Mention[] }) {
           href={youtubeURL(m.episodeID, m.timestamp)}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-6 py-4 border-b border-[#E8E8E8] hover:bg-[#FFFDE0] transition-colors"
+          className="group grid grid-cols-[1fr_auto] gap-6 py-5 border-t border-[#1A1A1A] hover:bg-[#111111] transition-colors -mx-6 px-6"
         >
-          <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-            <span className="text-sm font-medium text-[#111111] line-clamp-1 group-hover:text-black transition-colors">
+          <div className="flex flex-col gap-1 min-w-0">
+            <span className="text-[15px] font-medium text-[#BDBAB5] line-clamp-1 group-hover:text-[#EDEBE6] transition-colors leading-snug">
               {m.title}
             </span>
             {m.publishedAt && (
-              <span className="text-xs text-[#A1A1A1]">
+              <span
+                className="text-[12px] text-[#444440]"
+                style={{ fontFamily: "var(--font-barlow)" }}
+              >
                 {new Date(m.publishedAt).toLocaleDateString("en-GB", {
                   day: "numeric",
                   month: "short",
@@ -38,7 +43,7 @@ export default function MentionList({ mentions }: { mentions: Mention[] }) {
           </div>
           {m.timestamp !== null && (
             <span
-              className="text-base font-black text-[#A1A1A1] group-hover:text-[#CA9B52] transition-colors shrink-0 tabular-nums"
+              className="text-[15px] font-black text-[#333330] group-hover:text-[#FFE200] transition-colors shrink-0 tabular-nums mt-0.5"
               style={{ fontFamily: "var(--font-barlow)" }}
             >
               {formatTimestamp(m.timestamp)}
@@ -46,6 +51,7 @@ export default function MentionList({ mentions }: { mentions: Mention[] }) {
           )}
         </a>
       ))}
+      <div className="border-t border-[#1A1A1A]" />
     </div>
   );
 }

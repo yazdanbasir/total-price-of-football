@@ -19,34 +19,26 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
     <div className="flex flex-col gap-6">
       {/* Search */}
       <div className="relative">
-        <svg
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A1A1A1] pointer-events-none"
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
+        <span
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#444440] text-xs font-black pointer-events-none select-none"
+          style={{ fontFamily: "var(--font-barlow)" }}
           aria-hidden="true"
         >
-          <circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
-          <path
-            d="M10.5 10.5L14 14"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
+          /
+        </span>
         <input
           type="search"
           placeholder="Search terms…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full border-2 border-[#111111] pl-11 pr-10 py-4 text-base text-[#111111] placeholder:text-[#A1A1A1] focus:outline-none focus:border-[#FFE200] bg-white transition-colors"
+          className="w-full bg-[#111111] border border-[#2A2A2A] focus:border-[#FFE200] pl-8 pr-10 py-4 text-base text-[#EDEBE6] placeholder:text-[#333330] focus:outline-none transition-colors"
+          style={{ fontFamily: "var(--font-barlow)" }}
         />
         {query && (
           <button
             onClick={() => setQuery("")}
             aria-label="Clear search"
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A1A1A1] hover:text-[#111111] transition-colors text-xl leading-none"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#444440] hover:text-[#EDEBE6] transition-colors text-lg leading-none"
           >
             ×
           </button>
@@ -54,14 +46,17 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
       </div>
 
       {query && (
-        <p className="text-xs text-[#A1A1A1] -mt-2">
+        <p
+          className="text-[12px] text-[#444440] -mt-2"
+          style={{ fontFamily: "var(--font-barlow)" }}
+        >
           {filtered.length} of {concepts.length} terms
         </p>
       )}
 
       {filtered.length === 0 ? (
-        <div className="py-16 text-center">
-          <p className="text-[#A1A1A1] text-sm">No terms found for &ldquo;{query}&rdquo;.</p>
+        <div className="py-20 text-center">
+          <p className="text-[#444440]">No terms found for &ldquo;{query}&rdquo;.</p>
         </div>
       ) : (
         <div className="flex flex-col">
@@ -69,23 +64,27 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
             <Link
               key={c.id}
               href={`/glossary/${c.id}`}
-              className="group flex items-center gap-6 py-5 border-b border-[#E8E8E8] -mx-8 px-8 hover:bg-[#FFFDE0] transition-colors"
+              className="group grid grid-cols-[1fr_auto] gap-6 py-6 border-t border-[#1A1A1A] -mx-6 px-6 hover:bg-[#111111] transition-colors"
             >
-              <div className="flex flex-col gap-1 flex-1 min-w-0">
-                <span className="text-base font-semibold text-[#111111]">
+              <div className="flex flex-col gap-2 min-w-0">
+                <span className="text-[17px] font-semibold text-[#BDBAB5] group-hover:text-[#EDEBE6] transition-colors leading-snug">
                   {c.term}
                 </span>
                 {c.definition && (
-                  <span className="text-sm text-[#A1A1A1] line-clamp-1">
+                  <p className="text-[15px] text-[#555550] line-clamp-2 leading-relaxed">
                     {c.definition}
-                  </span>
+                  </p>
                 )}
               </div>
-              <span className="text-sm text-[#CA9B52] opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+              <span
+                className="text-xs font-black text-[#2A2A28] group-hover:text-[#FFE200] transition-colors mt-1 shrink-0"
+                style={{ fontFamily: "var(--font-barlow)" }}
+              >
                 →
               </span>
             </Link>
           ))}
+          <div className="border-t border-[#1A1A1A]" />
         </div>
       )}
     </div>

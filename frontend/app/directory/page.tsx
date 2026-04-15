@@ -5,16 +5,19 @@ export default async function DirectoryPage() {
   const data = await api.profiles.list({ limit: 1000 });
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-1">
+    <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="mb-10">
         <h1
-          className="text-3xl font-normal text-[#111111]"
-          style={{ fontFamily: "var(--font-playfair)" }}
+          className="text-[clamp(40px,6vw,72px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
+          style={{ fontFamily: "var(--font-display)" }}
         >
           Directory
         </h1>
-        <p className="text-sm text-[#A1A1A1]">
-          {data.total} clubs, people, organisations &amp; bodies discussed on the show
+        <p
+          className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440] mt-4"
+          style={{ fontFamily: "var(--font-barlow)" }}
+        >
+          {data.total} clubs, people, organisations &amp; bodies
         </p>
       </div>
 

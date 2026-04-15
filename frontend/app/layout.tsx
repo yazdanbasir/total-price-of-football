@@ -1,24 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Playfair_Display, Barlow_Condensed, Open_Sans } from "next/font/google";
-import SideNav from "@/components/SideNav";
+import { Big_Shoulders, Bricolage_Grotesque, Barlow_Condensed } from "next/font/google";
+import HeaderNavLink from "@/components/HeaderNavLink";
 import "./globals.css";
 
-const playfair = Playfair_Display({
+const bigShoulders = Big_Shoulders({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["400", "700", "900"],
+  variable: "--font-display",
+});
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-body",
 });
 
 const barlow = Barlow_Condensed({
   subsets: ["latin"],
   weight: ["700", "800", "900"],
   variable: "--font-barlow",
-});
-
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  variable: "--font-open-sans",
 });
 
 export const metadata: Metadata = {
@@ -28,27 +29,50 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`h-full ${playfair.variable} ${barlow.variable} ${openSans.variable}`}>
-      <body className="min-h-full flex flex-col bg-white text-[#464646]" style={{ fontFamily: "var(--font-open-sans)" }}>
-        {/* Top header */}
+    <html lang="en" className={`h-full ${bigShoulders.variable} ${bricolage.variable} ${barlow.variable}`}>
+      <body
+        className="min-h-full flex flex-col bg-[#0A0A0A] text-[#EDEBE6]"
+        style={{ fontFamily: "var(--font-body)" }}
+      >
         <header className="sticky top-0 z-50 bg-[#FFE200] border-b-4 border-black">
-          <div className="px-6 h-14 flex items-center">
-            <Link href="/" className="flex items-center">
-              <Image src="/pof_logo.png" alt="Total Price of Football" height={36} width={36} style={{ height: "36px", width: "auto" }} />
+          <div className="px-6 h-14 flex items-center relative">
+
+            {/* Left: logo */}
+            <Link href="/" className="flex items-center shrink-0">
+              <Image
+                src="/pof_logo.png"
+                alt="Total Price of Football"
+                height={48}
+                width={48}
+                style={{ height: "48px", width: "auto" }}
+              />
             </Link>
+
+            {/* Center: site name */}
+            <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none">
+              <span
+                className="font-black uppercase whitespace-nowrap"
+                style={{ fontFamily: "var(--font-barlow)", color: "#000000", fontSize: "25px", letterSpacing: "0.12em" }}
+              >
+                Total Price of Football
+              </span>
+            </div>
+
+            {/* Right: nav */}
+            <nav className="ml-auto flex items-center gap-1" aria-label="Site navigation">
+              <HeaderNavLink href="/glossary">Glossary</HeaderNavLink>
+              <HeaderNavLink href="/directory">Directory</HeaderNavLink>
+              <HeaderNavLink href="/episodes">Episodes</HeaderNavLink>
+            </nav>
+
           </div>
         </header>
 
-        {/* Body: sidebar + content */}
-        <div className="flex flex-1">
-          <SideNav />
+        <main className="flex-1">
+          {children}
+        </main>
 
-          <main className="flex-1 px-8 py-10 min-w-0">
-            {children}
-          </main>
-        </div>
-
-        <footer className="border-t border-[#E8E8E8] text-[#A1A1A1] text-xs text-center py-6">
+        <footer className="border-t border-[#1E1E1E] text-[#444440] text-xs text-center py-6">
           A fan project. All content from{" "}
           <a
             href="https://www.youtube.com/@POF_POD"

@@ -1,23 +1,20 @@
 @import "tailwindcss";
 
-:root {
-  --yellow: #FFE200;
-  --black: #000000;
-  --gold: #CA9B52;
-  --green-light: #5CBF5C;
-  --green-dark: #2E7D32;
-  --text-heading: #111111;
-  --text-body: #464646;
-  --text-secondary: #A1A1A1;
-  --border: #E8E8E8;
-  --bg: #FFFFFF;
+html {
+  scroll-behavior: smooth;
+  font-size: 106.25%; /* 1rem = 17px — gentle global bump */
 }
 
 body {
   -webkit-font-smoothing: antialiased;
+  background-color: #0A0A0A;
+  color: #EDEBE6;
+  line-height: 1.65;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }

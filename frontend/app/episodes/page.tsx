@@ -1,4 +1,4 @@
-import { api } from "@/lib/api";
+import { api, youtubeURL } from "@/lib/api";
 
 function parseDuration(iso: string | null): string {
   if (!iso) return "";
@@ -14,38 +14,46 @@ export default async function EpisodesPage() {
   const data = await api.episodes.list({ limit: 100 });
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-1">
+    <div className="max-w-6xl mx-auto px-6 py-12">
+
+      <div className="mb-12">
         <h1
-          className="text-3xl font-normal text-[#111111]"
-          style={{ fontFamily: "var(--font-playfair)" }}
+          className="text-[clamp(40px,6vw,72px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
+          style={{ fontFamily: "var(--font-display)" }}
         >
           Episodes
         </h1>
-        <p className="text-sm text-[#A1A1A1]">{data.total} episodes</p>
+        <p
+          className="text-[12px] font-black uppercase tracking-[0.18em] text-[#444440] mt-4"
+          style={{ fontFamily: "var(--font-barlow)" }}
+        >
+          {data.total} episodes archived
+        </p>
       </div>
 
       <div className="flex flex-col">
-        {data.episodes.map((ep) => (
+        {data.episodes.map((ep, i) => (
           <a
             key={ep.youtubeID}
-            href={`https://www.youtube.com/watch?v=${ep.youtubeID}`}
+            href={youtubeURL(ep.youtubeID)}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-5 py-5 border-b border-[#E8E8E8] -mx-8 px-8 hover:bg-[#FFFDE0] transition-colors"
+            className="group grid grid-cols-[56px_1fr] gap-6 py-5 border-t border-[#1E1E1E] hover:bg-[#141414] transition-colors -mx-6 px-6"
           >
-            {ep.thumbnail && (
-              <img
-                src={ep.thumbnail}
-                alt=""
-                className="w-28 h-[63px] object-cover shrink-0"
-              />
-            )}
-            <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-              <span className="text-sm font-semibold text-[#111111] line-clamp-2 leading-snug group-hover:text-black transition-colors">
+            <span
+              className="text-[12px] font-black tabular-nums text-[#2E2E2C] group-hover:text-[#FFE200] transition-colors pt-0.5"
+              style={{ fontFamily: "var(--font-barlow)" }}
+            >
+              {String(data.total - i).padStart(3, "0")}
+            </span>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[15px] font-medium text-[#BDBAB5] line-clamp-2 leading-snug group-hover:text-[#EDEBE6] transition-colors">
                 {ep.title}
               </span>
-              <div className="flex items-center gap-2 text-xs text-[#A1A1A1]">
+              <div
+                className="flex items-center gap-3 text-[12px] text-[#444440]"
+                style={{ fontFamily: "var(--font-barlow)" }}
+              >
                 {ep.publishedAt && (
                   <span>
                     {new Date(ep.publishedAt).toLocaleDateString("en-GB", {
@@ -63,12 +71,11 @@ export default async function EpisodesPage() {
                 )}
               </div>
             </div>
-            <span className="text-sm text-[#CA9B52] opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-              →
-            </span>
           </a>
         ))}
+        <div className="border-t border-[#1E1E1E]" />
       </div>
+
     </div>
   );
 }

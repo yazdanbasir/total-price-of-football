@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { api } from "@/lib/api";
+import { siYoutube, siSpotify, siApplepodcasts } from "simple-icons";
 
 export default async function Home() {
   const [concepts, profiles, episodes] = await Promise.all([
@@ -8,20 +10,44 @@ export default async function Home() {
     api.episodes.list({ limit: 1 }),
   ]);
 
+  const stats = [
+    { href: "/glossary", count: concepts.total, label: "Terms" },
+    { href: "/directory", count: profiles.total, label: "Profiles" },
+    { href: "/episodes", count: episodes.total, label: "Episodes" },
+  ];
+
   return (
-    <div className="flex flex-col gap-12 py-12">
+    <div>
+
       {/* Hero */}
-      <div className="flex flex-col gap-5">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#CA9B52]">
+      <section className="max-w-6xl mx-auto px-6 pt-16 pb-14 text-center">
+        <p
+          className="text-[12px] font-black uppercase tracking-[0.2em] text-[#444440] mb-10"
+          style={{ fontFamily: "var(--font-barlow)" }}
+        >
           The Price of Football — Complete Archive
         </p>
+
         <h1
-          className="text-6xl font-normal leading-[1.05] text-[#111111]"
-          style={{ fontFamily: "var(--font-playfair)" }}
+          className="uppercase font-black leading-[0.88] text-[#EDEBE6] mb-3"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(52px, 9vw, 108px)",
+          }}
         >
-          Football finance, <em>fully documented.</em>
+          Football Finance,
         </h1>
-        <p className="text-base leading-relaxed text-[#464646]">
+        <h1
+          className="uppercase font-black leading-[0.88] text-[#FFE200] mb-12"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(52px, 9vw, 108px)",
+          }}
+        >
+          Fully Documented.
+        </h1>
+
+        <p className="text-[15px] text-[#666560] max-w-xl mx-auto leading-relaxed">
           {episodes.total} episodes. Every financial term, club, person, and
           story — timestamped and linked to the exact moment it was covered on
           the{" "}
@@ -29,81 +55,154 @@ export default async function Home() {
             href="https://www.youtube.com/@POF_POD"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#CA9B52] hover:underline"
+            className="text-[#CA9B52] hover:text-[#FFE200] transition-colors"
           >
             Price of Football
           </a>{" "}
           podcast.
         </p>
+      </section>
+
+      {/* Stats bar */}
+      <div className="border-t border-b border-[#1E1E1E]">
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-3">
+          {stats.map((s, i) => (
+            <Link
+              key={s.href}
+              href={s.href}
+              className={`group flex flex-col gap-2 py-8 px-6 hover:bg-[#141414] transition-colors ${
+                i < stats.length - 1 ? "border-r border-[#1E1E1E]" : ""
+              } ${i === 0 ? "pl-0" : ""} ${i === stats.length - 1 ? "pr-0" : ""}`}
+            >
+              <span
+                className="text-[clamp(36px,5vw,56px)] font-black leading-none tabular-nums text-[#EDEBE6] group-hover:text-[#FFE200] transition-colors"
+                style={{ fontFamily: "var(--font-barlow)" }}
+              >
+                {s.count}
+              </span>
+              <span
+                className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440] group-hover:text-[#666560] transition-colors"
+                style={{ fontFamily: "var(--font-barlow)" }}
+              >
+                {s.label} →
+              </span>
+            </Link>
+          ))}
+        </div>
       </div>
 
-      {/* Section index */}
-      <div className="flex flex-col">
-        <div className="border-t-2 border-[#111111]" />
+      {/* Latest episode */}
+      {episodes.episodes[0] && (() => {
+        const ep = episodes.episodes[0];
+        const listenLinks = [
+          {
+            label: "YouTube",
+            href: "https://www.youtube.com/@POF_POD",
+            icon: siYoutube,
+          },
+          {
+            label: "Spotify",
+            href: "https://open.spotify.com/show/7c7ltYVwnicbVz0uYTXAW5",
+            icon: siSpotify,
+          },
+          {
+            label: "Apple",
+            href: "https://podcasts.apple.com/gb/podcast/the-price-of-football/id1482886394",
+            icon: siApplepodcasts,
+          },
+          {
+            label: "Website",
+            href: "https://priceoffootball.com",
+            icon: null,
+          },
+        ];
 
-        <Link
-          href="/glossary"
-          className="group flex items-center gap-8 py-7 border-b border-[#E8E8E8] -mx-8 px-8 hover:bg-[#FFFDE0] transition-colors"
-        >
-          <span
-            className="text-5xl font-black text-[#111111] w-20 shrink-0 tabular-nums"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
-            {concepts.total}
-          </span>
-          <div className="flex flex-col gap-1 flex-1 min-w-0">
-            <span className="text-lg font-semibold text-[#111111]">Glossary</span>
-            <span className="text-sm text-[#A1A1A1]">
-              Financial terms &amp; regulations explained
-            </span>
-          </div>
-          <span className="text-sm text-[#CA9B52] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0">
-            Browse →
-          </span>
-        </Link>
+        return (
+          <section className="max-w-6xl mx-auto px-6 py-14">
+            <div className="flex items-center justify-between mb-8">
+              <span
+                className="text-[12px] font-black uppercase tracking-[0.2em] text-[#444440]"
+                style={{ fontFamily: "var(--font-barlow)" }}
+              >
+                Latest Episode
+              </span>
+              <Link
+                href="/episodes"
+                className="text-[12px] font-black uppercase tracking-[0.15em] text-[#CA9B52] hover:text-[#FFE200] transition-colors"
+                style={{ fontFamily: "var(--font-barlow)" }}
+              >
+                Full archive →
+              </Link>
+            </div>
 
-        <Link
-          href="/directory"
-          className="group flex items-center gap-8 py-7 border-b border-[#E8E8E8] -mx-8 px-8 hover:bg-[#FFFDE0] transition-colors"
-        >
-          <span
-            className="text-5xl font-black text-[#111111] w-20 shrink-0 tabular-nums"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
-            {profiles.total}
-          </span>
-          <div className="flex flex-col gap-1 flex-1 min-w-0">
-            <span className="text-lg font-semibold text-[#111111]">Directory</span>
-            <span className="text-sm text-[#A1A1A1]">
-              Clubs, people, organisations &amp; bodies
-            </span>
-          </div>
-          <span className="text-sm text-[#CA9B52] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0">
-            Browse →
-          </span>
-        </Link>
+            <div className="bg-[#111111] p-8 flex gap-8 items-center">
 
-        <Link
-          href="/episodes"
-          className="group flex items-center gap-8 py-7 border-b border-[#E8E8E8] -mx-8 px-8 hover:bg-[#FFFDE0] transition-colors"
-        >
-          <span
-            className="text-5xl font-black text-[#111111] w-20 shrink-0 tabular-nums"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
-            {episodes.total}
-          </span>
-          <div className="flex flex-col gap-1 flex-1 min-w-0">
-            <span className="text-lg font-semibold text-[#111111]">Episodes</span>
-            <span className="text-sm text-[#A1A1A1]">
-              Browse the full podcast archive
-            </span>
-          </div>
-          <span className="text-sm text-[#CA9B52] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0">
-            Browse →
-          </span>
-        </Link>
-      </div>
+              {/* Logo */}
+              <div className="shrink-0 rounded-xl bg-[#FFE200] flex items-center justify-center" style={{ width: "80px", height: "80px" }}>
+                <Image
+                  src="/pof_logo.png"
+                  alt="Price of Football"
+                  width={64}
+                  height={64}
+                  style={{ width: "64px", height: "64px", objectFit: "contain" }}
+                />
+              </div>
+
+              {/* Content */}
+              <div className="flex flex-col gap-5 min-w-0 flex-1">
+                <div className="flex flex-col gap-2">
+                  {ep.publishedAt && (
+                    <span
+                      className="text-[12px] uppercase tracking-[0.18em] text-[#444440]"
+                      style={{ fontFamily: "var(--font-barlow)" }}
+                    >
+                      {new Date(ep.publishedAt).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                  )}
+                  <p className="text-[20px] font-semibold text-[#EDEBE6] leading-snug">
+                    {ep.title}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {listenLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-[#1E1E1E] hover:bg-[#FFE200] text-[#666560] hover:text-black transition-colors"
+                    >
+                      {link.icon ? (
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0" aria-hidden="true">
+                          <path d={link.icon.path} />
+                        </svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10"/>
+                          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                      )}
+                      <span
+                        className="text-[11px] font-black uppercase tracking-[0.12em]"
+                        style={{ fontFamily: "var(--font-barlow)" }}
+                      >
+                        {link.label}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </section>
+        );
+      })()}
+
     </div>
   );
 }
