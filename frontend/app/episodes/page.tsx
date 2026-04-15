@@ -11,7 +11,8 @@ function parseDuration(iso: string | null): string {
 }
 
 export default async function EpisodesPage() {
-  const data = await api.episodes.list({ limit: 100 });
+  const { total } = await api.episodes.list({ limit: 1 });
+  const data = await api.episodes.list({ limit: total });
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">

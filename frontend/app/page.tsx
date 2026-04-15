@@ -22,7 +22,7 @@ export default async function Home() {
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 pt-16 pb-14 text-center">
         <p
-          className="text-[12px] font-black uppercase tracking-[0.2em] text-[#444440] mb-10"
+          className="text-[14px] font-black uppercase tracking-[0.2em] text-[#666560] mb-10"
           style={{ fontFamily: "var(--font-barlow)" }}
         >
           The Price of Football — Complete Archive
@@ -47,7 +47,7 @@ export default async function Home() {
           Fully Documented.
         </h1>
 
-        <p className="text-[15px] text-[#666560] max-w-xl mx-auto leading-relaxed">
+        <p className="text-[17px] text-[#888580] max-w-xl mx-auto leading-relaxed">
           {episodes.total} episodes. Every financial term, club, person, and
           story — timestamped and linked to the exact moment it was covered on
           the{" "}
@@ -64,15 +64,15 @@ export default async function Home() {
       </section>
 
       {/* Stats bar */}
-      <div className="border-t border-b border-[#1E1E1E]">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-3">
+      <div>
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-3 border border-[#1E1E1E]">
           {stats.map((s, i) => (
             <Link
               key={s.href}
               href={s.href}
               className={`group flex flex-col gap-2 py-8 px-6 hover:bg-[#141414] transition-colors ${
                 i < stats.length - 1 ? "border-r border-[#1E1E1E]" : ""
-              } ${i === 0 ? "pl-0" : ""} ${i === stats.length - 1 ? "pr-0" : ""}`}
+              }`}
             >
               <span
                 className="text-[clamp(36px,5vw,56px)] font-black leading-none tabular-nums text-[#EDEBE6] group-hover:text-[#FFE200] transition-colors"
@@ -81,7 +81,7 @@ export default async function Home() {
                 {s.count}
               </span>
               <span
-                className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440] group-hover:text-[#666560] transition-colors"
+                className="text-[14px] font-black uppercase tracking-[0.18em] text-[#666560] group-hover:text-[#888580] transition-colors"
                 style={{ fontFamily: "var(--font-barlow)" }}
               >
                 {s.label} →
@@ -121,21 +121,21 @@ export default async function Home() {
           <section className="max-w-6xl mx-auto px-6 py-14">
             <div className="flex items-center justify-between mb-8">
               <span
-                className="text-[12px] font-black uppercase tracking-[0.2em] text-[#444440]"
+                className="text-[14px] font-black uppercase tracking-[0.2em] text-[#666560]"
                 style={{ fontFamily: "var(--font-barlow)" }}
               >
                 Latest Episode
               </span>
               <Link
                 href="/episodes"
-                className="text-[12px] font-black uppercase tracking-[0.15em] text-[#CA9B52] hover:text-[#FFE200] transition-colors"
+                className="text-[14px] font-black uppercase tracking-[0.15em] text-[#CA9B52] hover:text-[#FFE200] transition-colors"
                 style={{ fontFamily: "var(--font-barlow)" }}
               >
                 Full archive →
               </Link>
             </div>
 
-            <div className="bg-[#111111] p-8 flex gap-8 items-center">
+            <div className="bg-[#151514] p-8 flex gap-8 items-center">
 
               {/* Logo */}
               <div className="shrink-0 rounded-xl bg-[#FFE200] flex items-center justify-center" style={{ width: "80px", height: "80px" }}>
@@ -153,7 +153,7 @@ export default async function Home() {
                 <div className="flex flex-col gap-2">
                   {ep.publishedAt && (
                     <span
-                      className="text-[12px] uppercase tracking-[0.18em] text-[#444440]"
+                      className="text-[14px] uppercase tracking-[0.18em] text-[#666560]"
                       style={{ fontFamily: "var(--font-barlow)" }}
                     >
                       {new Date(ep.publishedAt).toLocaleDateString("en-GB", {
@@ -175,7 +175,7 @@ export default async function Home() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-[#1E1E1E] hover:bg-[#FFE200] text-[#666560] hover:text-black transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 bg-[#282826] hover:bg-[#FFE200] text-[#888580] hover:text-black transition-colors"
                     >
                       {link.icon ? (
                         <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0" aria-hidden="true">
@@ -188,7 +188,7 @@ export default async function Home() {
                         </svg>
                       )}
                       <span
-                        className="text-[11px] font-black uppercase tracking-[0.12em]"
+                        className="text-[13px] font-black uppercase tracking-[0.12em]"
                         style={{ fontFamily: "var(--font-barlow)" }}
                       >
                         {link.label}
