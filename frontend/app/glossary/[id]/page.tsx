@@ -21,15 +21,14 @@ export default async function ConceptPage({
 
       <Link
         href="/glossary"
-        className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#444440] hover:text-[#FFE200] transition-colors mb-10"
-        style={{ fontFamily: "var(--font-barlow)" }}
+        className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[#444440] hover:text-[#FFE200] transition-colors mb-10"
       >
         ← Glossary
       </Link>
 
       <h1
         className="text-[clamp(36px,5vw,64px)] font-black uppercase leading-[0.9] text-[#EDEBE6] mb-8"
-        style={{ fontFamily: "var(--font-display)" }}
+        style={{ fontFamily: "var(--font-barlow)" }}
       >
         {concept.term}
       </h1>
@@ -44,22 +43,13 @@ export default async function ConceptPage({
 
       <div className="flex flex-col gap-5">
         <div className="flex items-center gap-4">
-          <span
-            className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440]"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
+          <span className="text-[11px] uppercase tracking-[0.18em] text-[#444440]">
             Mentioned in
           </span>
-          <span
-            className="text-lg font-black tabular-nums text-[#FFE200] leading-none"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
+          <span className="text-lg font-black tabular-nums text-[#FFE200] leading-none">
             {concept.mentions.length}
           </span>
-          <span
-            className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440]"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
+          <span className="text-[11px] uppercase tracking-[0.18em] text-[#444440]">
             episode{concept.mentions.length !== 1 ? "s" : ""}
           </span>
         </div>

@@ -21,17 +21,14 @@ export default async function Home() {
 
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 pt-16 pb-14 text-center">
-        <p
-          className="text-[14px] font-black uppercase tracking-[0.2em] text-[#666560] mb-10"
-          style={{ fontFamily: "var(--font-barlow)" }}
-        >
-          The Price of Football — Complete Archive
+        <p className="text-[17px] text-[#888580] max-w-xl mx-auto leading-relaxed mb-10">
+          The Price of Football - Complete Archive
         </p>
 
         <h1
           className="uppercase font-black leading-[0.88] text-[#EDEBE6] mb-3"
           style={{
-            fontFamily: "var(--font-display)",
+            fontFamily: "var(--font-barlow)",
             fontSize: "clamp(52px, 9vw, 108px)",
           }}
         >
@@ -40,7 +37,7 @@ export default async function Home() {
         <h1
           className="uppercase font-black leading-[0.88] text-[#FFE200] mb-12"
           style={{
-            fontFamily: "var(--font-display)",
+            fontFamily: "var(--font-barlow)",
             fontSize: "clamp(52px, 9vw, 108px)",
           }}
         >
@@ -80,10 +77,7 @@ export default async function Home() {
               >
                 {s.count}
               </span>
-              <span
-                className="text-[14px] font-black uppercase tracking-[0.18em] text-[#666560] group-hover:text-[#888580] transition-colors"
-                style={{ fontFamily: "var(--font-barlow)" }}
-              >
+              <span className="text-[14px] font-semibold uppercase tracking-[0.18em] text-[#666560] group-hover:text-[#888580] transition-colors">
                 {s.label} →
               </span>
             </Link>
@@ -120,16 +114,12 @@ export default async function Home() {
         return (
           <section className="max-w-6xl mx-auto px-6 py-14">
             <div className="flex items-center justify-between mb-8">
-              <span
-                className="text-[14px] font-black uppercase tracking-[0.2em] text-[#666560]"
-                style={{ fontFamily: "var(--font-barlow)" }}
-              >
+              <span className="text-[14px] uppercase tracking-[0.2em] text-[#666560]">
                 Latest Episode
               </span>
               <Link
                 href="/episodes"
-                className="text-[14px] font-black uppercase tracking-[0.15em] text-[#CA9B52] hover:text-[#FFE200] transition-colors"
-                style={{ fontFamily: "var(--font-barlow)" }}
+                className="text-[14px] font-semibold uppercase tracking-[0.15em] text-[#CA9B52] hover:text-[#FFE200] transition-colors"
               >
                 Full archive →
               </Link>
@@ -152,10 +142,7 @@ export default async function Home() {
               <div className="flex flex-col gap-5 min-w-0 flex-1">
                 <div className="flex flex-col gap-2">
                   {ep.publishedAt && (
-                    <span
-                      className="text-[14px] uppercase tracking-[0.18em] text-[#666560]"
-                      style={{ fontFamily: "var(--font-barlow)" }}
-                    >
+                    <span className="text-[14px] uppercase tracking-[0.18em] text-[#666560]">
                       {new Date(ep.publishedAt).toLocaleDateString("en-GB", {
                         day: "numeric",
                         month: "long",
@@ -187,10 +174,7 @@ export default async function Home() {
                           <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                         </svg>
                       )}
-                      <span
-                        className="text-[13px] font-black uppercase tracking-[0.12em]"
-                        style={{ fontFamily: "var(--font-barlow)" }}
-                      >
+                      <span className="text-[13px] font-semibold uppercase tracking-[0.12em]">
                         {link.label}
                       </span>
                     </a>

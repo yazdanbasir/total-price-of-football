@@ -20,14 +20,11 @@ export default async function EpisodesPage() {
       <div className="mb-12">
         <h1
           className="text-[clamp(40px,6vw,72px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
-          style={{ fontFamily: "var(--font-display)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           Episodes
         </h1>
-        <p
-          className="text-[12px] font-black uppercase tracking-[0.18em] text-[#444440] mt-4"
-          style={{ fontFamily: "var(--font-barlow)" }}
-        >
+        <p className="text-[12px] uppercase tracking-[0.18em] text-[#444440] mt-4">
           {data.total} episodes archived
         </p>
       </div>
@@ -51,10 +48,7 @@ export default async function EpisodesPage() {
               <span className="text-[15px] font-medium text-[#BDBAB5] line-clamp-2 leading-snug group-hover:text-[#EDEBE6] transition-colors">
                 {ep.title}
               </span>
-              <div
-                className="flex items-center gap-3 text-[12px] text-[#444440]"
-                style={{ fontFamily: "var(--font-barlow)" }}
-              >
+              <div className="flex items-center gap-3 text-[12px] text-[#444440]">
                 {ep.publishedAt && (
                   <span>
                     {new Date(ep.publishedAt).toLocaleDateString("en-GB", {

@@ -29,10 +29,7 @@ export default function MentionList({ mentions }: { mentions: Mention[] }) {
               {m.title}
             </span>
             {m.publishedAt && (
-              <span
-                className="text-[12px] text-[#444440]"
-                style={{ fontFamily: "var(--font-barlow)" }}
-              >
+              <span className="text-[12px] text-[#444440]">
                 {new Date(m.publishedAt).toLocaleDateString("en-GB", {
                   day: "numeric",
                   month: "short",
@@ -42,10 +39,7 @@ export default function MentionList({ mentions }: { mentions: Mention[] }) {
             )}
           </div>
           {m.timestamp !== null && (
-            <span
-              className="text-[15px] font-black text-[#333330] group-hover:text-[#FFE200] transition-colors shrink-0 tabular-nums mt-0.5"
-              style={{ fontFamily: "var(--font-barlow)" }}
-            >
+            <span className="text-[15px] font-black text-[#333330] group-hover:text-[#FFE200] transition-colors shrink-0 tabular-nums mt-0.5">
               {formatTimestamp(m.timestamp)}
             </span>
           )}

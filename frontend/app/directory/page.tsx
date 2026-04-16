@@ -9,14 +9,11 @@ export default async function DirectoryPage() {
       <div className="mb-10">
         <h1
           className="text-[clamp(40px,6vw,72px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
-          style={{ fontFamily: "var(--font-display)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           Directory
         </h1>
-        <p
-          className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440] mt-4"
-          style={{ fontFamily: "var(--font-barlow)" }}
-        >
+        <p className="text-[12px] uppercase tracking-[0.18em] text-[#444440] mt-4">
           {data.total} clubs, people, organisations &amp; bodies
         </p>
       </div>

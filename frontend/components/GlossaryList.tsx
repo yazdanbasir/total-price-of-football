@@ -20,8 +20,7 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
       {/* Search */}
       <div className="relative">
         <span
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#444440] text-xs font-black pointer-events-none select-none"
-          style={{ fontFamily: "var(--font-barlow)" }}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#444440] text-xs pointer-events-none select-none"
           aria-hidden="true"
         >
           /
@@ -32,7 +31,6 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="w-full bg-[#111111] border border-[#2A2A2A] focus:border-[#FFE200] pl-8 pr-10 py-4 text-base text-[#EDEBE6] placeholder:text-[#333330] focus:outline-none transition-colors"
-          style={{ fontFamily: "var(--font-barlow)" }}
         />
         {query && (
           <button
@@ -46,10 +44,7 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
       </div>
 
       {query && (
-        <p
-          className="text-[12px] text-[#444440] -mt-2"
-          style={{ fontFamily: "var(--font-barlow)" }}
-        >
+        <p className="text-[12px] text-[#444440] -mt-2">
           {filtered.length} of {concepts.length} terms
         </p>
       )}
@@ -59,32 +54,44 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
           <p className="text-[#444440]">No terms found for &ldquo;{query}&rdquo;.</p>
         </div>
       ) : (
-        <div className="flex flex-col">
-          {filtered.map((c) => (
+        <div className="flex flex-col gap-3">
+          {filtered.map((c, i) => (
             <Link
               key={c.id}
               href={`/glossary/${c.id}`}
-              className="group grid grid-cols-[1fr_auto] gap-6 py-6 border-t border-[#1A1A1A] -mx-6 px-6 hover:bg-[#111111] transition-colors"
+              className="group bg-[#151514] p-8 flex gap-8 items-center hover:bg-[#1C1C1B] transition-colors"
             >
-              <div className="flex flex-col gap-2 min-w-0">
-                <span className="text-[17px] font-semibold text-[#BDBAB5] group-hover:text-[#EDEBE6] transition-colors leading-snug">
-                  {c.term}
+              {/* Left marker */}
+              <div
+                className="shrink-0 bg-[#FFE200] flex items-center justify-center"
+                style={{ width: "64px", height: "64px" }}
+              >
+                <span
+                  className="text-[28px] font-black text-black tabular-nums leading-none"
+                  style={{ fontFamily: "var(--font-barlow)" }}
+                >
+                  {i + 1}
                 </span>
+              </div>
+
+              {/* Content */}
+              <div className="flex flex-col gap-2 min-w-0 flex-1">
+                <p className="text-[20px] font-semibold text-[#EDEBE6] leading-snug group-hover:text-[#FFE200] transition-colors">
+                  {c.term}
+                </p>
                 {c.definition && (
-                  <p className="text-[15px] text-[#555550] line-clamp-2 leading-relaxed">
+                  <p className="text-[14px] text-[#666560] line-clamp-2 leading-relaxed">
                     {c.definition}
                   </p>
                 )}
               </div>
-              <span
-                className="text-xs font-black text-[#2A2A28] group-hover:text-[#FFE200] transition-colors mt-1 shrink-0"
-                style={{ fontFamily: "var(--font-barlow)" }}
-              >
+
+              {/* Arrow */}
+              <span className="text-[#333330] group-hover:text-[#FFE200] transition-colors text-xl shrink-0">
                 →
               </span>
             </Link>
           ))}
-          <div className="border-t border-[#1A1A1A]" />
         </div>
       )}
     </div>

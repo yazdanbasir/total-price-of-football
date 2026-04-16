@@ -21,8 +21,7 @@ export default async function ProfilePage({
 
       <Link
         href="/directory"
-        className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#444440] hover:text-[#FFE200] transition-colors mb-10"
-        style={{ fontFamily: "var(--font-barlow)" }}
+        className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[#444440] hover:text-[#FFE200] transition-colors mb-10"
       >
         ← Directory
       </Link>
@@ -30,14 +29,11 @@ export default async function ProfilePage({
       <div className="flex items-baseline gap-4 mb-8">
         <h1
           className="text-[clamp(36px,5vw,64px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
-          style={{ fontFamily: "var(--font-display)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           {profile.name}
         </h1>
-        <span
-          className="text-[10px] font-black uppercase tracking-[0.15em] text-[#444440] border border-[#2A2A2A] px-2 py-1 shrink-0"
-          style={{ fontFamily: "var(--font-barlow)" }}
-        >
+        <span className="text-[10px] uppercase tracking-[0.15em] text-[#444440] border border-[#2A2A2A] px-2 py-1 shrink-0">
           {profile.type}
         </span>
       </div>
@@ -52,22 +48,13 @@ export default async function ProfilePage({
 
       <div className="flex flex-col gap-5">
         <div className="flex items-center gap-4">
-          <span
-            className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440]"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
+          <span className="text-[11px] uppercase tracking-[0.18em] text-[#444440]">
             Mentioned in
           </span>
-          <span
-            className="text-lg font-black tabular-nums text-[#FFE200] leading-none"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
+          <span className="text-lg font-black tabular-nums text-[#FFE200] leading-none">
             {profile.mentions.length}
           </span>
-          <span
-            className="text-[11px] font-black uppercase tracking-[0.18em] text-[#444440]"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
+          <span className="text-[11px] uppercase tracking-[0.18em] text-[#444440]">
             episode{profile.mentions.length !== 1 ? "s" : ""}
           </span>
         </div>

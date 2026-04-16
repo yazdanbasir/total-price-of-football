@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Big_Shoulders, Bricolage_Grotesque, Barlow_Condensed } from "next/font/google";
+import { Bricolage_Grotesque, Big_Shoulders } from "next/font/google";
 import HeaderNavLink from "@/components/HeaderNavLink";
 import "./globals.css";
 
-const bigShoulders = Big_Shoulders({
-  subsets: ["latin"],
-  weight: ["400", "700", "900"],
-  variable: "--font-display",
-});
-
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-body",
 });
 
-const barlow = Barlow_Condensed({
+const bigShoulders = Big_Shoulders({
   subsets: ["latin"],
   weight: ["700", "800", "900"],
   variable: "--font-barlow",
@@ -29,11 +22,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`h-full ${bigShoulders.variable} ${bricolage.variable} ${barlow.variable}`}>
-      <body
-        className="min-h-full flex flex-col bg-[#0A0A0A] text-[#EDEBE6]"
-        style={{ fontFamily: "var(--font-body)" }}
-      >
+    <html lang="en" className={`h-full ${bricolage.className} ${bigShoulders.variable}`}>
+      <body className="min-h-full flex flex-col bg-[#0A0A0A] text-[#EDEBE6]">
         <header className="sticky top-0 z-50 bg-[#FFE200] border-b-4 border-black">
           <div className="px-6 h-14 flex items-center relative">
 
@@ -52,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none">
               <span
                 className="font-black uppercase whitespace-nowrap"
-                style={{ fontFamily: "var(--font-barlow)", color: "#000000", fontSize: "25px", letterSpacing: "0.12em" }}
+                style={{ fontFamily: "var(--font-barlow)", color: "#000000", fontSize: "27px", letterSpacing: "0.04em", fontWeight: 900 }}
               >
                 Total Price of Football
               </span>
