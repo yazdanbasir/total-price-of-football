@@ -39,19 +39,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
 
             {/* Center: site name */}
-            <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none">
+            <Link href="/" className="absolute left-1/2 -translate-x-1/2">
               <span
                 className="font-black uppercase whitespace-nowrap"
                 style={{ fontFamily: "var(--font-barlow)", color: "#000000", fontSize: "27px", letterSpacing: "0.04em", fontWeight: 900 }}
               >
                 Total Price of Football
               </span>
-            </div>
+            </Link>
 
             {/* Right: nav */}
             <nav className="ml-auto flex items-center gap-1" aria-label="Site navigation">
               <HeaderNavLink href="/glossary">Glossary</HeaderNavLink>
               <HeaderNavLink href="/directory">Directory</HeaderNavLink>
+              <HeaderNavLink href="/about">About</HeaderNavLink>
             </nav>
 
           </div>

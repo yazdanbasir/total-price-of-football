@@ -19,8 +19,8 @@ export default async function Home() {
     <div>
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-6 pt-16 pb-14 text-center">
-        <p className="text-[17px] text-[#888580] max-w-xl mx-auto leading-relaxed mb-10">
+      <section className="max-w-6xl mx-auto px-6 pt-14 pb-10 text-center">
+        <p className="text-[17px] text-[#888580] max-w-xl mx-auto leading-relaxed mb-8">
           The Price of Football - Complete Archive
         </p>
 
@@ -98,7 +98,7 @@ export default async function Home() {
         ];
 
         return (
-          <section className="max-w-6xl mx-auto px-6 py-14">
+          <section className="max-w-6xl mx-auto px-6 py-12">
             <div className="flex items-center justify-between mb-8">
               <span className="text-[14px] uppercase tracking-[0.2em] text-[#666560]">
                 Latest Episode
