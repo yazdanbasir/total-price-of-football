@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { Profile } from "@/lib/api";
 
 const TYPES = [
@@ -85,10 +84,9 @@ export default function DirectoryList({ profiles }: { profiles: Profile[] }) {
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((p, i) => (
-            <Link
+            <div
               key={p.id}
-              href={`/directory/${p.id}`}
-              className="group bg-[#151514] p-8 flex gap-8 items-center hover:bg-[#1C1C1B] transition-colors"
+              className="bg-[#151514] p-8 flex gap-8 items-center hover:bg-[#1C1C1B] transition-colors"
             >
               {/* Left marker */}
               <div
@@ -106,7 +104,7 @@ export default function DirectoryList({ profiles }: { profiles: Profile[] }) {
               {/* Content */}
               <div className="flex flex-col gap-2 min-w-0 flex-1">
                 <div className="flex items-center gap-3">
-                  <p className="text-[20px] font-semibold text-[#EDEBE6] leading-snug group-hover:text-[#FFE200] transition-colors">
+                  <p className="text-[20px] font-semibold text-[#EDEBE6] leading-snug">
                     {p.name}
                   </p>
                   <span className="text-[10px] uppercase tracking-[0.15em] text-[#444440] border border-[#2A2A2A] px-1.5 py-0.5 shrink-0">
@@ -119,12 +117,7 @@ export default function DirectoryList({ profiles }: { profiles: Profile[] }) {
                   </p>
                 )}
               </div>
-
-              {/* Arrow */}
-              <span className="text-[#333330] group-hover:text-[#FFE200] transition-colors text-xl shrink-0">
-                →
-              </span>
-            </Link>
+            </div>
           ))}
         </div>
       )}

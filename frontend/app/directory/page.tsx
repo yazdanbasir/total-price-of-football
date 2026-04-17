@@ -14,7 +14,7 @@ export default async function DirectoryPage() {
           Directory
         </h1>
         <p className="text-[12px] uppercase tracking-[0.18em] text-[#444440] mt-4">
-          {data.total} clubs, people, organisations &amp; bodies
+          Clubs, people, organisations &amp; bodies
         </p>
       </div>
 

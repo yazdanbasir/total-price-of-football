@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { Concept } from "@/lib/api";
 
 export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
@@ -56,10 +55,9 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((c, i) => (
-            <Link
+            <div
               key={c.id}
-              href={`/glossary/${c.id}`}
-              className="group bg-[#151514] p-8 flex gap-8 items-center hover:bg-[#1C1C1B] transition-colors"
+              className="bg-[#151514] p-8 flex gap-8 items-center hover:bg-[#1C1C1B] transition-colors"
             >
               {/* Left marker */}
               <div
@@ -76,7 +74,7 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
 
               {/* Content */}
               <div className="flex flex-col gap-2 min-w-0 flex-1">
-                <p className="text-[20px] font-semibold text-[#EDEBE6] leading-snug group-hover:text-[#FFE200] transition-colors">
+                <p className="text-[20px] font-semibold text-[#EDEBE6] leading-snug">
                   {c.term}
                 </p>
                 {c.definition && (
@@ -85,12 +83,7 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
                   </p>
                 )}
               </div>
-
-              {/* Arrow */}
-              <span className="text-[#333330] group-hover:text-[#FFE200] transition-colors text-xl shrink-0">
-                →
-              </span>
-            </Link>
+            </div>
           ))}
         </div>
       )}

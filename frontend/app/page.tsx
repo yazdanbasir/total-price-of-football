@@ -13,7 +13,6 @@ export default async function Home() {
   const stats = [
     { href: "/glossary", count: concepts.total, label: "Terms" },
     { href: "/directory", count: profiles.total, label: "Profiles" },
-    { href: "/episodes", count: episodes.total, label: "Episodes" },
   ];
 
   return (
@@ -44,32 +43,19 @@ export default async function Home() {
           Fully Documented.
         </h1>
 
-        <p className="text-[17px] text-[#888580] max-w-xl mx-auto leading-relaxed">
-          {episodes.total} episodes. Every financial term, club, person, and
-          story — timestamped and linked to the exact moment it was covered on
-          the{" "}
-          <a
-            href="https://www.youtube.com/@POF_POD"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#CA9B52] hover:text-[#FFE200] transition-colors"
-          >
-            Price of Football
-          </a>{" "}
-          podcast.
+        <p className="text-[17px] text-[#888580] mx-auto leading-relaxed whitespace-nowrap">
+          Every financial term, club, person, and story as covered on the <a href="https://www.youtube.com/@POF_POD" target="_blank" rel="noopener noreferrer" className="text-[#CA9B52] hover:text-[#FFE200] transition-colors">Price of Football</a> podcast :)
         </p>
       </section>
 
       {/* Stats bar */}
       <div>
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-3 border border-[#1E1E1E]">
+        <div className="max-w-3xl mx-auto grid grid-cols-2 border border-[#1E1E1E]">
           {stats.map((s, i) => (
             <Link
               key={s.href}
               href={s.href}
-              className={`group flex flex-col gap-2 py-8 px-6 hover:bg-[#141414] transition-colors ${
-                i < stats.length - 1 ? "border-r border-[#1E1E1E]" : ""
-              }`}
+              className={`group flex flex-col gap-2 py-8 px-6 h-full hover:bg-[#141414] transition-colors ${i < stats.length - 1 ? "border-r border-[#1E1E1E]" : ""}`}
             >
               <span
                 className="text-[clamp(36px,5vw,56px)] font-black leading-none tabular-nums text-[#EDEBE6] group-hover:text-[#FFE200] transition-colors"
@@ -117,26 +103,19 @@ export default async function Home() {
               <span className="text-[14px] uppercase tracking-[0.2em] text-[#666560]">
                 Latest Episode
               </span>
-              <Link
-                href="/episodes"
-                className="text-[14px] font-semibold uppercase tracking-[0.15em] text-[#CA9B52] hover:text-[#FFE200] transition-colors"
-              >
-                Full archive →
-              </Link>
             </div>
 
             <div className="bg-[#151514] p-8 flex gap-8 items-center">
 
               {/* Logo */}
-              <div className="shrink-0 rounded-xl bg-[#FFE200] flex items-center justify-center" style={{ width: "80px", height: "80px" }}>
-                <Image
-                  src="/pof_logo.png"
-                  alt="Price of Football"
-                  width={64}
-                  height={64}
-                  style={{ width: "64px", height: "64px", objectFit: "contain" }}
-                />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="Price of Football"
+                width={80}
+                height={80}
+                className="shrink-0"
+                style={{ width: "80px", height: "80px", objectFit: "contain" }}
+              />
 
               {/* Content */}
               <div className="flex flex-col gap-5 min-w-0 flex-1">

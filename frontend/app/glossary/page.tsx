@@ -14,7 +14,7 @@ export default async function GlossaryPage() {
           Glossary
         </h1>
         <p className="text-[12px] uppercase tracking-[0.18em] text-[#444440] mt-4">
-          {data.total} financial terms explained
+          Financial terms explained
         </p>
       </div>
 

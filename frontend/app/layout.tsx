@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {/* Left: logo */}
             <Link href="/" className="flex items-center shrink-0">
               <Image
-                src="/pof_logo.png"
+                src="/logo.png"
                 alt="Total Price of Football"
                 height={48}
                 width={48}
@@ -52,7 +52,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <nav className="ml-auto flex items-center gap-1" aria-label="Site navigation">
               <HeaderNavLink href="/glossary">Glossary</HeaderNavLink>
               <HeaderNavLink href="/directory">Directory</HeaderNavLink>
-              <HeaderNavLink href="/episodes">Episodes</HeaderNavLink>
             </nav>
 
           </div>
