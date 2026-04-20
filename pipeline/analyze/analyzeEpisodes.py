@@ -36,12 +36,12 @@ Your task is to extract structured data from a transcript segment. Return ONLY v
 Extract the following:
 
 1. **concepts** — financial or regulatory terms explained or defined on this episode. Include terms where the show gives a meaningful explanation, even partial. Be thorough — include every term that gets any explanation.
-   - term: the term or phrase
+   - term: the canonical, full form of the term. If it has a common abbreviation, write "Full Name (ABBR)" — e.g. "Financial Fair Play (FFP)", "Profit and Sustainability Rules (PSR)". Never use the abbreviation alone as the term.
    - definition: a 1–3 sentence explanation derived from what was said on the show
    - timestamps: array of seconds (integers) where the term is meaningfully discussed
 
 2. **profiles** — people, football clubs, organisations, or regulatory bodies that are meaningfully discussed (not just briefly name-dropped).
-   - name: full name
+   - name: the full, standard name — e.g. "Chelsea FC" not "Chelsea", "Manchester City FC" not "Man City", "FC Barcelona" not "Barça" or "Barcelona FC". For people, use their full name. Never use nicknames, partial names, or abbreviations as the name.
    - type: one of "person", "club", "organisation", "body"
    - description: 1–2 sentence description of who/what they are and their relevance to football finance, based on the episode
    - timestamps: array of seconds (integers) where they are meaningfully discussed
@@ -50,6 +50,12 @@ Extract the following:
    - headline: short headline (max 10 words)
    - summary: 2–4 sentence summary of what was discussed
    - timestamp: integer seconds where this story begins
+
+Normalisation rules — strictly follow these:
+- One entry per entity. Do not create separate entries for the same entity under different names.
+- Club names: always include the legal suffix where standard — "FC", "AFC", "United", etc. Use the form the club officially uses.
+- Abbreviations: always expand to full name. "FFP" → "Financial Fair Play (FFP)".
+- People: use full name, e.g. "Kieran Maguire" not "Maguire" or "Prof Maguire".
 
 Return this exact JSON structure:
 {

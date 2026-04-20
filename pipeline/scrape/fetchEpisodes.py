@@ -1,128 +1,99 @@
-# Fetches all video metadata from the @POF_POD YouTube channel and writes it to data/episodes.json.
+# Fetches all episode metadata from the Supporting Cast RSS feed and writes to data/episodes.json.
+# Safe to re-run — overwrites episodes.json with the full current feed on each run.
+# Requires: RSS_FEED_URL in pipeline/.env
 
 import json
 import os
 import re
+import xml.etree.ElementTree as ET
+from datetime import timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
+
+import requests
 from dotenv import load_dotenv
-from googleapiclient.discovery import build
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-youtubeApiKey = os.getenv("YOUTUBE_API_KEY")
-channelHandle = "@POF_POD"
+RSS_FEED_URL = os.getenv("RSS_FEED_URL")
+if not RSS_FEED_URL:
+    raise EnvironmentError("RSS_FEED_URL not set. Add it to pipeline/.env")
+
 outputFile = Path(__file__).parent.parent / "data" / "episodes.json"
+outputFile.parent.mkdir(parents=True, exist_ok=True)
+
+ITUNES_NS = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 
 
-def getChannelID(youtube, handle: str) -> str:
-    response = youtube.search().list(
-        part="snippet",
-        q=handle,
-        type="channel",
-        maxResults=1,
-    ).execute()
-    return response["items"][0]["snippet"]["channelId"]
+def secondsToISO(seconds: int) -> str:
+    h = seconds // 3600
+    m = (seconds % 3600) // 60
+    s = seconds % 60
+    parts = "PT"
+    if h:
+        parts += f"{h}H"
+    if m:
+        parts += f"{m}M"
+    if s or len(parts) == 2:
+        parts += f"{s}S"
+    return parts
 
 
-def getUploadsPlaylistID(youtube, channelID: str) -> str:
-    response = youtube.channels().list(
-        part="contentDetails",
-        id=channelID,
-    ).execute()
-    return response["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
+def cleanText(text: str) -> str:
+    # Strip zero-width/invisible unicode chars used by podcast apps for hyperlinks
+    cleaned = re.sub(r'[\u2060\u200b\u200c\u200d\ufeff]', '', text)
+    return re.sub(r'\n{3,}', '\n\n', cleaned).strip()
 
 
-def fetchAllVideos(youtube, playlistID: str) -> list[dict]:
-    videos = []
-    pageToken = None
+print("Fetching RSS feed...")
+response = requests.get(RSS_FEED_URL, timeout=30)
+response.raise_for_status()
 
-    while True:
-        response = youtube.playlistItems().list(
-            part="snippet,contentDetails",
-            playlistId=playlistID,
-            maxResults=50,
-            pageToken=pageToken,
-        ).execute()
+root = ET.fromstring(response.content)
+items = root.findall(".//item")
+print(f"Found {len(items)} items in feed.")
 
-        for item in response["items"]:
-            snippet = item["snippet"]
-            videos.append({
-                "youtubeID": snippet["resourceId"]["videoId"],
-                "title": snippet["title"],
-                "publishedAt": snippet["publishedAt"],
-                "description": snippet["description"],
-                "thumbnail": snippet.get("thumbnails", {}).get("medium", {}).get("url"),
-            })
+episodes = []
+skipped = 0
 
-        pageToken = response.get("nextPageToken")
-        if not pageToken:
-            break
+for item in items:
+    episodeType = item.findtext(f"{{{ITUNES_NS}}}episodeType") or "full"
+    if episodeType == "trailer":
+        skipped += 1
+        continue
 
-    return videos
+    guid = item.findtext("guid", "").strip()
+    title = item.findtext("title", "").strip()
+    pubDateStr = item.findtext("pubDate", "")
+    description = cleanText(item.findtext("description", ""))
 
+    enc = item.find("enclosure")
+    audioURL = enc.get("url") if enc is not None else None
 
-def parseDurationSeconds(iso: str) -> int:
-    """Convert ISO 8601 duration (e.g. PT1H2M3S) to total seconds."""
-    if not iso:
-        return 0
-    hours = int(m.group(1)) if (m := re.search(r'(\d+)H', iso)) else 0
-    minutes = int(m.group(1)) if (m := re.search(r'(\d+)M', iso)) else 0
-    seconds = int(m.group(1)) if (m := re.search(r'(\d+)S', iso)) else 0
-    return hours * 3600 + minutes * 60 + seconds
+    durationRaw = item.findtext(f"{{{ITUNES_NS}}}duration")
+    try:
+        durationISO = secondsToISO(int(durationRaw)) if durationRaw else None
+    except (ValueError, TypeError):
+        durationISO = durationRaw
 
+    try:
+        publishedAt = parsedate_to_datetime(pubDateStr).astimezone(timezone.utc).isoformat()
+    except Exception:
+        publishedAt = pubDateStr
 
-def fetchVideoDurations(youtube, videos: list[dict]) -> list[dict]:
-    ids = [v["youtubeID"] for v in videos]
-    durations = {}
+    episodes.append({
+        "youtubeID": guid,
+        "title": title,
+        "publishedAt": publishedAt,
+        "duration": durationISO,
+        "thumbnail": None,
+        "description": description,
+        "audioURL": audioURL,
+    })
 
-    for i in range(0, len(ids), 50):
-        batch = ids[i:i + 50]
-        response = youtube.videos().list(
-            part="contentDetails",
-            id=",".join(batch),
-        ).execute()
-        for item in response["items"]:
-            durations[item["id"]] = item["contentDetails"]["duration"]
+episodes.sort(key=lambda e: e["publishedAt"])
 
-    for video in videos:
-        video["duration"] = durations.get(video["youtubeID"])
+with open(outputFile, "w") as f:
+    json.dump(episodes, f, indent=2)
 
-    return videos
-
-
-def main():
-    if not youtubeApiKey:
-        raise ValueError("YOUTUBE_API_KEY not set in .env")
-
-    outputFile.parent.mkdir(parents=True, exist_ok=True)
-
-    youtube = build("youtube", "v3", developerKey=youtubeApiKey)
-
-    print(f"Looking up channel: {channelHandle}")
-    channelID = getChannelID(youtube, channelHandle)
-    print(f"Channel ID: {channelID}")
-
-    playlistID = getUploadsPlaylistID(youtube, channelID)
-    print(f"Uploads playlist: {playlistID}")
-
-    print("Fetching video list...")
-    videos = fetchAllVideos(youtube, playlistID)
-    print(f"Found {len(videos)} videos. Fetching durations...")
-
-    videos = fetchVideoDurations(youtube, videos)
-
-    # Filter out YouTube Shorts (<=60 seconds)
-    before = len(videos)
-    videos = [v for v in videos if parseDurationSeconds(v["duration"]) > 60]
-    print(f"Filtered out {before - len(videos)} Shorts. Keeping {len(videos)} videos.")
-
-    videos.sort(key=lambda v: v["publishedAt"])
-
-    with open(outputFile, "w") as f:
-        json.dump(videos, f, indent=2)
-
-    print(f"Saved {len(videos)} episodes to {outputFile}")
-
-
-if __name__ == "__main__":
-    main()
+print(f"Saved {len(episodes)} episodes to {outputFile} ({skipped} trailers skipped).")

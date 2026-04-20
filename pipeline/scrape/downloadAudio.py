@@ -1,14 +1,12 @@
 # Downloads audio for all episodes in data/episodes.json into audio/.
-# Safe to pause and re-run — already downloaded files are skipped.
-# Requires node (v22+) at /usr/local/bin/node for yt-dlp's JS challenge solver.
+# Safe to re-run — already downloaded files are skipped.
+# Uses direct HTTP download from the RSS feed audioURL.
 
 import json
-import os
 from pathlib import Path
-import yt_dlp
-from tqdm import tqdm
 
-os.environ["PATH"] = f"/usr/local/bin:{os.environ.get('PATH', '')}"
+import requests
+from tqdm import tqdm
 
 episodesFile = Path(__file__).parent.parent / "data" / "episodes.json"
 audioDir = Path(__file__).parent.parent / "audio"
@@ -18,80 +16,43 @@ audioDir.mkdir(parents=True, exist_ok=True)
 with open(episodesFile) as f:
     episodes = json.load(f)
 
-baseOptions = {
-    "cookiesfrombrowser": ("brave",),
-    "js_runtimes": {"node": {}},
-    "quiet": True,
-    "no_warnings": True,
-}
-
-def isAlreadyDownloaded(youtubeID: str) -> bool:
-    return any(audioDir.glob(f"{youtubeID}.*"))
-
-def getBestAudioFormatID(url: str) -> str | None:
-    """Return the format ID of the best available audio-only stream, or None."""
-    with yt_dlp.YoutubeDL({**baseOptions, "format": "bestaudio"}) as ydl:
-        info = ydl.extract_info(url, download=False)
-        formats = info.get("formats", [])
-        audioOnly = [f for f in formats if f.get("vcodec") == "none" and f.get("acodec") not in (None, "none")]
-        if audioOnly:
-            return max(audioOnly, key=lambda f: f.get("abr") or 0)["format_id"]
-        withAudio = [f for f in formats if f.get("acodec") not in (None, "none")]
-        if withAudio:
-            return max(withAudio, key=lambda f: f.get("abr") or 0)["format_id"]
-        return None
-
 skipped = []
 failed = []
 downloaded = 0
 
 with tqdm(total=len(episodes), desc="Episodes", unit="ep") as bar:
     for episode in episodes:
-        youtubeID = episode["youtubeID"]
+        episodeID = episode["youtubeID"]
         title = episode["title"]
         shortTitle = title[:50]
+        audioURL = episode.get("audioURL")
+        outputPath = audioDir / f"{episodeID}.mp3"
 
-        if isAlreadyDownloaded(youtubeID):
+        if outputPath.exists():
             bar.set_postfix(status="skip", ep=shortTitle)
-            skipped.append({"youtubeID": youtubeID, "title": title, "reason": "already downloaded"})
+            skipped.append({"episodeID": episodeID, "title": title, "reason": "already downloaded"})
             bar.update(1)
             continue
 
-        url = f"https://www.youtube.com/watch?v={youtubeID}"
-        bar.set_postfix(status="checking", ep=shortTitle)
-
-        try:
-            formatID = getBestAudioFormatID(url)
-        except Exception as e:
-            tqdm.write(f"SKIPPED (format check failed): {title} — {e}")
-            skipped.append({"youtubeID": youtubeID, "title": title, "reason": f"format check failed: {e}"})
-            bar.update(1)
-            continue
-
-        if not formatID:
-            tqdm.write(f"SKIPPED (no audio available): {title}")
-            skipped.append({"youtubeID": youtubeID, "title": title, "reason": "no audio format available"})
+        if not audioURL:
+            tqdm.write(f"SKIPPED (no audioURL): {title}")
+            skipped.append({"episodeID": episodeID, "title": title, "reason": "no audioURL in episodes.json"})
             bar.update(1)
             continue
 
         bar.set_postfix(status="downloading", ep=shortTitle)
         try:
-            with yt_dlp.YoutubeDL({
-                **baseOptions,
-                "format": formatID,
-                "outtmpl": str(audioDir / "%(id)s.%(ext)s"),
-                "postprocessors": [{
-                    "key": "FFmpegExtractAudio",
-                    "preferredcodec": "mp3",
-                    "preferredquality": "128",
-                }],
-            }) as ydl:
-                ydl.download([url])
+            with requests.get(audioURL, stream=True, timeout=120) as r:
+                r.raise_for_status()
+                with open(outputPath, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=65536):
+                        f.write(chunk)
             downloaded += 1
             tqdm.write(f"Downloaded: {title}")
         except Exception as e:
+            outputPath.unlink(missing_ok=True)
             tqdm.write(f"FAILED: {title} — {e}")
-            failed.append({"youtubeID": youtubeID, "title": title, "reason": str(e)})
+            failed.append({"episodeID": episodeID, "title": title, "reason": str(e)})
 
         bar.update(1)
 
