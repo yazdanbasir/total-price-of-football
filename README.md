@@ -1,6 +1,6 @@
 # Total Price of Football
 
-A searchable knowledge base built from the [Total Football Analysis](https://www.youtube.com/@TotalFootballAnalysis) podcast, hosted by Keiran Maguire and Kevin Day.
+A searchable knowledge base built from the [Price of Football](https://www.youtube.com/@POF_POD) podcast, hosted by Keiran Maguire and Kevin Day.
 
 ## About the Project
 
@@ -17,6 +17,8 @@ The project is open source. The code and transcripts are available for all to pe
 - List-style episode summaries so fans/listeners can quickly glance which topics were covered when
 - A search/chatbot at the top where you can engage in simple interactions to look up definitions, terms, profiles, or the number of episodes Keiran and Kevin were interrupted by the postman.
 - Chronological history of terms and profiles. For example, the Chelsea entry would show a simple timeline of the stories covered on the podcast and major events like Abramovich's assets getting frozen or the sale of their women's team to themselves.
+
+Much love to Keiran and Kevin. Thank you for making the pod a joy to listen to. God bless you.
 
 ## Stack
 
