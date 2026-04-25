@@ -2,7 +2,7 @@ import { api } from "@/lib/api";
 import DirectoryList from "@/components/DirectoryList";
 
 export default async function DirectoryPage() {
-  const data = await api.profiles.list({ limit: 1000 });
+  const data = await api.profiles.list({ limit: 6000 });
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">

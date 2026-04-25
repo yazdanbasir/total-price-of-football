@@ -20,8 +20,7 @@ export default function DirectoryList({ profiles }: { profiles: Profile[] }) {
     const matchesType = !type || p.type === type;
     const matchesQuery =
       !query.trim() ||
-      p.name.toLowerCase().includes(query.toLowerCase()) ||
-      p.description?.toLowerCase().includes(query.toLowerCase());
+      p.name.toLowerCase().includes(query.toLowerCase());
     return matchesType && matchesQuery;
   });
 

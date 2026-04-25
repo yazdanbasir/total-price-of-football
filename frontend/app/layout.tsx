@@ -13,6 +13,7 @@ const bigShoulders = Big_Shoulders({
   subsets: ["latin"],
   weight: ["700", "800", "900"],
   variable: "--font-barlow",
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {

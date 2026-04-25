@@ -4,6 +4,7 @@
 # Run after analyzeEpisodes.py has completed.
 
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -12,38 +13,73 @@ from rapidfuzz import fuzz
 analysisDir = Path(__file__).parent.parent / "analysis"
 dataDir = Path(__file__).parent.parent / "data"
 
-# Thresholds for fuzzy merging — conservative to avoid false positives
-CONCEPT_THRESHOLD = 92   # e.g. "Financial Fair Play" vs "Financial Fair Play (FFP)"
-PROFILE_THRESHOLD = 90   # e.g. "Chelsea FC" vs "Chelsea Football Club"
+# Thresholds for fuzzy merging
+CONCEPT_THRESHOLD = 90
+PROFILE_THRESHOLD = 88
 
 analysisFiles = sorted(analysisDir.glob("*.json"))
 print(f"Found {len(analysisFiles)} analysis files to aggregate.\n")
 
 
-def fuzzyMerge(entityMap: dict, threshold: int, scoreFunc) -> dict:
+def normalizeProfileKey(name: str) -> str:
+    """Normalize a profile name for comparison: expand 'Football Club' → 'fc',
+    convert '(Women)' parentheticals to ' women', strip other context parentheticals,
+    strip legal suffixes, and normalize ampersand variants."""
+    s = name.lower().strip()
+    s = re.sub(r"\bassociation\s+football\s+club\b", "afc", s)
+    s = re.sub(r"\bfootball\s+club\b", "fc", s)
+    # Convert women's parentheticals to a token rather than stripping
+    s = re.sub(r"\(\s*women'?s?\s*\)", " women", s)
+    # Strip remaining context parentheticals (stadium names, incidents, etc.)
+    s = re.sub(r"\([^)]*\)", "", s)
+    s = re.sub(r"\b(limited|ltd\.?|plc|llc|inc\.?)\b", "", s)
+    s = s.replace(" & ", " and ")
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
+def normalizeConceptKey(term: str) -> str:
+    """Normalize a concept term for comparison: strip parenthetical abbreviations."""
+    s = term.lower().strip()
+    s = re.sub(r"\s*\([^)]*\)\s*", " ", s).strip()
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
+def hasWomen(name: str) -> bool:
+    return bool(re.search(r"\bwomen\b", name, re.IGNORECASE))
+
+
+def fuzzyMerge(entityMap: dict, threshold: int, normalizeKey, sameGroup=None) -> dict:
     """
-    Merge entries whose keys score above threshold.
-    For each new key, compare against all established canonicals.
+    Merge entries whose normalized keys score above threshold.
+    Uses max(ratio, token_sort_ratio) for profiles; ratio only for concepts.
     The entry with more episode mentions becomes the canonical name.
+    sameGroup: optional callable(keyA, keyB) → bool, extra guard against merging.
     """
     canonicals: list[str] = []
     redirects: dict[str, str] = {}
+    normCache: dict[str, str] = {k: normalizeKey(k) for k in entityMap}
+
+    def score(a: str, b: str) -> float:
+        na, nb = normCache[a], normCache[b]
+        return max(fuzz.ratio(na, nb), fuzz.token_sort_ratio(na, nb))
 
     for key in entityMap:
         bestScore = 0
         bestCanonical = None
         for can in canonicals:
-            score = scoreFunc(key, can)
-            if score > bestScore:
-                bestScore = score
+            if sameGroup and not sameGroup(key, can):
+                continue
+            s = score(key, can)
+            if s > bestScore:
+                bestScore = s
                 bestCanonical = can
 
         if bestScore >= threshold:
-            # Redirect to existing canonical, but swap if this key has more episodes
             existingEps = len(entityMap[bestCanonical]["episodes"])
             newEps = len(entityMap[key]["episodes"])
             if newEps > existingEps:
-                # New key becomes the canonical; redirect old canonical to it
                 redirects[bestCanonical] = key
                 canonicals[canonicals.index(bestCanonical)] = key
             else:
@@ -51,7 +87,6 @@ def fuzzyMerge(entityMap: dict, threshold: int, scoreFunc) -> dict:
         else:
             canonicals.append(key)
 
-    # Build merged result by collecting all data under each canonical
     result: dict[str, dict] = {}
     for key, data in entityMap.items():
         can = key
@@ -110,7 +145,7 @@ for analysisFile in analysisFiles:
             })
 
 print(f"Concepts before dedup: {len(conceptMap)}")
-conceptMap = fuzzyMerge(dict(conceptMap), CONCEPT_THRESHOLD, fuzz.ratio)
+conceptMap = fuzzyMerge(dict(conceptMap), CONCEPT_THRESHOLD, normalizeConceptKey)
 print(f"Concepts after dedup:  {len(conceptMap)}")
 
 
@@ -146,8 +181,12 @@ for analysisFile in analysisFiles:
             })
 
 print(f"\nProfiles before dedup: {len(profileMap)}")
-# token_sort_ratio handles word-order variants like "FC Barcelona" vs "Barcelona FC"
-profileMap = fuzzyMerge(dict(profileMap), PROFILE_THRESHOLD, fuzz.token_sort_ratio)
+# Same-type and same women's/non-women's guard prevents false positives
+def profileSameGroup(a: str, b: str) -> bool:
+    return (profileMap[a]["type"] == profileMap[b]["type"] and
+            hasWomen(a) == hasWomen(b))
+
+profileMap = fuzzyMerge(dict(profileMap), PROFILE_THRESHOLD, normalizeProfileKey, sameGroup=profileSameGroup)
 print(f"Profiles after dedup:  {len(profileMap)}")
 
 

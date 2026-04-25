@@ -9,8 +9,7 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
   const filtered = query.trim()
     ? concepts.filter(
         (c) =>
-          c.term.toLowerCase().includes(query.toLowerCase()) ||
-          c.definition?.toLowerCase().includes(query.toLowerCase())
+          c.term.toLowerCase().includes(query.toLowerCase())
       )
     : concepts;
 
