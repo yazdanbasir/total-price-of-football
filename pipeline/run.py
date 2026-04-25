@@ -17,6 +17,7 @@ STEPS = [
     ("Transcribe episodes",  "transcribe/transcribeEpisodes.py"),
     ("Analyze episodes",     "analyze/analyzeEpisodes.py"),
     ("Aggregate analysis",   "analyze/aggregateAnalysis.py"),
+    ("Consolidate entities", "analyze/consolidateEntities.py"),
     ("Set up database",      "db/setupDB.py"),
     ("Insert into database", "db/insertData.py"),
 ]
