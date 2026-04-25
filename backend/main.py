@@ -1,5 +1,4 @@
 import os
-from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -15,14 +14,17 @@ from routes.profiles import router as profilesRouter
 from routes.episodes import router as episodesRouter
 from routes.chat import router as chatRouter
 
+_embedModel = None
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    app.state.embedModel = SentenceTransformer("all-MiniLM-L6-v2")
-    yield
+def getEmbedModel():
+    global _embedModel
+    if _embedModel is None:
+        _embedModel = SentenceTransformer("all-MiniLM-L6-v2")
+    return _embedModel
 
 
-app = FastAPI(title="Total Price of Football API", lifespan=lifespan)
+app = FastAPI(title="Total Price of Football API")
+app.state.getEmbedModel = getEmbedModel
 
 app.add_middleware(
     CORSMiddleware,

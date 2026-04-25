@@ -42,7 +42,7 @@ def chat(req: ChatRequest, request: Request):
     if not req.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty")
 
-    embedModel = request.app.state.embedModel
+    embedModel = request.app.state.getEmbedModel()
     embedding = embedModel.encode([req.message.strip()])[0].tolist()
     embeddingStr = embeddingToPg(embedding)
 
