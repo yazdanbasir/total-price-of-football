@@ -52,12 +52,12 @@ export default async function Home() {
 
       {/* Stats bar */}
       <div>
-        <div className="max-w-3xl mx-auto grid grid-cols-2 border border-[#1E1E1E]">
+        <div className="w-fit mx-auto grid grid-cols-2 border border-[#1E1E1E]">
           {stats.map((s, i) => (
             <Link
               key={s.href}
               href={s.href}
-              className={`group flex flex-col gap-2 py-8 px-6 h-full hover:bg-[#141414] transition-colors ${i < stats.length - 1 ? "border-r border-[#1E1E1E]" : ""}`}
+              className={`group flex flex-col items-center gap-2 py-8 px-10 h-full hover:bg-[#141414] transition-colors ${i < stats.length - 1 ? "border-r border-[#1E1E1E]" : ""}`}
             >
               <span
                 className="text-[clamp(36px,5vw,56px)] font-black leading-none tabular-nums text-[#EDEBE6] group-hover:text-[#FFE200] transition-colors"
