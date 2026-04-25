@@ -7,8 +7,6 @@ load_dotenv(Path(__file__).parent / ".env")
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from sentence_transformers import SentenceTransformer
-
 from routes.concepts import router as conceptsRouter
 from routes.profiles import router as profilesRouter
 from routes.episodes import router as episodesRouter
@@ -19,6 +17,7 @@ _embedModel = None
 def getEmbedModel():
     global _embedModel
     if _embedModel is None:
+        from sentence_transformers import SentenceTransformer
         _embedModel = SentenceTransformer("all-MiniLM-L6-v2")
     return _embedModel
 
