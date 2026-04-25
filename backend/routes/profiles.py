@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from database import getDB
 
 router = APIRouter()
@@ -7,7 +7,7 @@ VALID_TYPES = {"person", "club", "organisation", "body"}
 
 
 @router.get("/profiles")
-def listProfiles(search: str = "", type: str = "", page: int = 1, limit: int = 50):
+def listProfiles(search: str = Query("", max_length=200), type: str = Query("", max_length=50), page: int = 1, limit: int = Query(50, ge=1, le=100)):
     offset = (page - 1) * limit
     conditions = []
     params = []

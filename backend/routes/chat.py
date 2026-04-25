@@ -1,8 +1,9 @@
 import os
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import anthropic
 from database import getDB
+from limiter import limiter
 
 router = APIRouter()
 
@@ -23,7 +24,7 @@ Rules:
 
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(..., min_length=1, max_length=1000)
 
 
 def embeddingToPg(embedding: list) -> str:
@@ -38,6 +39,7 @@ def formatTimestamp(seconds) -> str:
 
 
 @router.post("/chat")
+@limiter.limit("10/minute")
 def chat(req: ChatRequest, request: Request):
     if not req.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty")
