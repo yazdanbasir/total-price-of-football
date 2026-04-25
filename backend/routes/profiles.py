@@ -7,7 +7,7 @@ VALID_TYPES = {"person", "club", "organisation", "body"}
 
 
 @router.get("/profiles")
-def listProfiles(search: str = Query("", max_length=200), type: str = Query("", max_length=50), page: int = 1, limit: int = Query(50, ge=1, le=100)):
+def listProfiles(search: str = Query("", max_length=200), type: str = Query("", max_length=50), page: int = 1, limit: int = Query(50, ge=1, le=10000)):
     offset = (page - 1) * limit
     conditions = []
     params = []

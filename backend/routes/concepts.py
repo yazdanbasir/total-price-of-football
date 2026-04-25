@@ -5,7 +5,7 @@ router = APIRouter()
 
 
 @router.get("/concepts")
-def listConcepts(search: str = Query("", max_length=200), page: int = 1, limit: int = Query(50, ge=1, le=100)):
+def listConcepts(search: str = Query("", max_length=200), page: int = 1, limit: int = Query(50, ge=1, le=10000)):
     offset = (page - 1) * limit
     with getDB() as conn:
         cur = conn.cursor()
