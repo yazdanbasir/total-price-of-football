@@ -16,7 +16,7 @@ export default function HeaderNavLink({
   return (
     <Link
       href={href}
-      className={`px-3 py-1.5 text-[20px] font-black uppercase tracking-[0.12em] transition-colors ${
+      className={`px-2 py-1 sm:px-3 sm:py-1.5 text-[14px] sm:text-[20px] font-black uppercase tracking-[0.12em] transition-colors ${
         isActive ? "bg-black" : "hover:bg-black/10"
       }`}
       style={{

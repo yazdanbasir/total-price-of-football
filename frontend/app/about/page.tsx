@@ -3,7 +3,7 @@ export default function AboutPage() {
     <div className="max-w-6xl mx-auto px-6 py-12">
       <div className="mb-10">
         <h1
-          className="text-[clamp(40px,6vw,72px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
+          className="text-[clamp(30px,6vw,72px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
           style={{ fontFamily: "var(--font-barlow)" }}
         >
           About
@@ -13,13 +13,12 @@ export default function AboutPage() {
         </p>
       </div>
 
-      <div className="bg-[#151514] p-8 flex gap-8 items-center">
+      <div className="bg-[#151514] p-4 sm:p-8 flex gap-4 sm:gap-8 items-center">
         <div
-          className="shrink-0 bg-[#FFE200] flex items-center justify-center"
-          style={{ width: "64px", height: "64px" }}
+          className="shrink-0 bg-[#FFE200] flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16"
         >
           <span
-            className="text-[28px] font-black text-black tabular-nums leading-none"
+            className="text-[22px] sm:text-[28px] font-black text-black tabular-nums leading-none"
             style={{ fontFamily: "var(--font-barlow)" }}
           >
             1

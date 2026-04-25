@@ -3,7 +3,12 @@
 html {
   scroll-behavior: smooth;
   font-size: 106.25%; /* 1rem = 17px — gentle global bump */
-  zoom: 0.9;
+}
+
+@media (min-width: 640px) {
+  html {
+    zoom: 0.9;
+  }
 }
 
 body {

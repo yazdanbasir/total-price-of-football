@@ -30,7 +30,7 @@ export default async function Home() {
           className="uppercase font-black leading-[0.88] text-[#EDEBE6] mb-3"
           style={{
             fontFamily: "var(--font-barlow)",
-            fontSize: "clamp(52px, 9vw, 108px)",
+            fontSize: "clamp(38px, 9vw, 108px)",
           }}
         >
           Football Finance,
@@ -39,13 +39,13 @@ export default async function Home() {
           className="uppercase font-black leading-[0.88] text-[#FFE200] mb-12"
           style={{
             fontFamily: "var(--font-barlow)",
-            fontSize: "clamp(52px, 9vw, 108px)",
+            fontSize: "clamp(38px, 9vw, 108px)",
           }}
         >
           Fully Documented.
         </h1>
 
-        <p className="text-[17px] text-[#888580] mx-auto leading-relaxed whitespace-nowrap">
+        <p className="text-[17px] text-[#888580] max-w-xl mx-auto leading-relaxed">
           Every financial term, club, person, and story as covered on the <a href="https://www.youtube.com/@POF_POD" target="_blank" rel="noopener noreferrer" className="text-[#CA9B52] hover:text-[#FFE200] transition-colors">Price of Football</a> podcast :)
         </p>
       </section>
@@ -107,7 +107,7 @@ export default async function Home() {
               </span>
             </div>
 
-            <div className="bg-[#151514] p-8 flex gap-8 items-center">
+            <div className="bg-[#151514] p-5 sm:p-8 flex flex-col sm:flex-row gap-5 sm:gap-8 items-start sm:items-center">
 
               {/* Logo */}
               <Image

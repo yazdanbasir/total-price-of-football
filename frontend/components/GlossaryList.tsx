@@ -56,15 +56,14 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
           {filtered.map((c, i) => (
             <div
               key={c.id}
-              className="bg-[#151514] p-8 flex gap-8 items-center hover:bg-[#1C1C1B] transition-colors"
+              className="bg-[#151514] p-4 sm:p-8 flex gap-4 sm:gap-8 items-center hover:bg-[#1C1C1B] transition-colors"
             >
               {/* Left marker */}
               <div
-                className="shrink-0 bg-[#FFE200] flex items-center justify-center"
-                style={{ width: "64px", height: "64px" }}
+                className="shrink-0 bg-[#FFE200] flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16"
               >
                 <span
-                  className="text-[28px] font-black text-black tabular-nums leading-none"
+                  className="text-[22px] sm:text-[28px] font-black text-black tabular-nums leading-none"
                   style={{ fontFamily: "var(--font-barlow)" }}
                 >
                   {i + 1}
@@ -77,7 +76,7 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
                   {c.term}
                 </p>
                 {c.definition && (
-                  <p className="text-[14px] text-[#666560] line-clamp-2 leading-relaxed">
+                  <p className="text-[14px] text-[#666560] leading-relaxed">
                     {c.definition}
                   </p>
                 )}

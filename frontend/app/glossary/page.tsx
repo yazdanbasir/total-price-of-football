@@ -10,7 +10,7 @@ export default async function GlossaryPage() {
     <div className="max-w-6xl mx-auto px-6 py-12">
       <div className="mb-10">
         <h1
-          className="text-[clamp(40px,6vw,72px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
+          className="text-[clamp(30px,6vw,72px)] font-black uppercase leading-[0.9] text-[#EDEBE6]"
           style={{ fontFamily: "var(--font-barlow)" }}
         >
           Glossary

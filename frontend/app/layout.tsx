@@ -39,8 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               />
             </Link>
 
-            {/* Center: site name */}
-            <Link href="/" className="absolute left-1/2 -translate-x-1/2">
+            {/* Center: site name — hidden on mobile to make room for nav links */}
+            <Link href="/" className="hidden sm:block absolute left-1/2 -translate-x-1/2">
               <span
                 className="font-black uppercase whitespace-nowrap"
                 style={{ fontFamily: "var(--font-barlow)", color: "#000000", fontSize: "27px", letterSpacing: "0.04em", fontWeight: 900 }}
