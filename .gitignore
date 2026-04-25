@@ -35,6 +35,10 @@ pipeline/analysis/
 # Cookies (never commit)
 *.txt
 cookies.txt
+
+# Allow requirements files
+!backend/requirements.txt
+!pipeline/requirements.txt
 *.cookies
 
 # Claude Code
