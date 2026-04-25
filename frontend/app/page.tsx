@@ -65,7 +65,7 @@ export default async function Home() {
               >
                 {s.count}
               </span>
-              <span className="text-[14px] font-semibold uppercase tracking-[0.18em] text-[#666560] group-hover:text-[#888580] transition-colors">
+              <span className="text-[14px] font-semibold uppercase tracking-[0.18em] text-[#666560] group-hover:text-[#888580] transition-colors whitespace-nowrap">
                 {s.label} →
               </span>
             </Link>
