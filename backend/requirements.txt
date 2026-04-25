@@ -4,4 +4,4 @@ psycopg2-binary==2.9.10
 python-dotenv==1.0.1
 anthropic==0.40.0
 sentence-transformers==3.3.1
-slowapi==0.5.7
+slowapi==0.1.9
