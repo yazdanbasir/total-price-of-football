@@ -52,6 +52,9 @@ export default function AboutPage() {
             <p>
               Much love to Keiran and Kevin. Thank you for making the pod a joy to listen to. God bless you.
             </p>
+            <p>
+              Disclaimer: all knowledge and content on this site belongs entirely to Keiran Maguire and Kevin Day. I have not created any of it — I have only built the tools to surface it. This project is not monetised in any way and exists purely as a fan-made resource.
+            </p>
           </div>
         </div>
       </div>
