@@ -63,7 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
 
-        <footer className="border-t border-[#1E1E1E] text-[#666560] text-[14px] text-center py-6">
+        <footer className="border-t border-[#1E1E1E] text-[#666560] text-[14px] text-center py-8 px-6 leading-relaxed">
           A fan project. All content from{" "}
           <a
             href="https://www.youtube.com/@POF_POD"
