@@ -102,7 +102,7 @@ export default function DirectoryList({ profiles }: { profiles: Profile[] }) {
               {/* Content */}
               <div className="flex flex-col gap-2 min-w-0 flex-1">
                 <div className="flex items-center gap-3">
-                  <p className="text-[22px] font-semibold text-[#EDEBE6] leading-snug">
+                  <p className="text-[24px] font-semibold text-[#EDEBE6] leading-snug">
                     {p.name}
                   </p>
                   <span className="text-[10px] uppercase tracking-[0.15em] text-[#444440] border border-[#2A2A2A] px-1.5 py-0.5 shrink-0">
@@ -110,7 +110,7 @@ export default function DirectoryList({ profiles }: { profiles: Profile[] }) {
                   </span>
                 </div>
                 {p.description && (
-                  <p className="text-[16px] text-[#666560] leading-relaxed">
+                  <p className="text-[17px] text-[#666560] leading-relaxed">
                     {p.description}
                   </p>
                 )}

@@ -72,11 +72,11 @@ export default function GlossaryList({ concepts }: { concepts: Concept[] }) {
 
               {/* Content */}
               <div className="flex flex-col gap-2 min-w-0 flex-1">
-                <p className="text-[22px] font-semibold text-[#EDEBE6] leading-snug">
+                <p className="text-[24px] font-semibold text-[#EDEBE6] leading-snug">
                   {c.term}
                 </p>
                 {c.definition && (
-                  <p className="text-[16px] text-[#666560] leading-relaxed">
+                  <p className="text-[17px] text-[#666560] leading-relaxed">
                     {c.definition}
                   </p>
                 )}

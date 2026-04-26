@@ -25,10 +25,10 @@ export default function AboutPage() {
           </span>
         </div>
         <div className="flex flex-col gap-4 min-w-0 flex-1">
-          <p className="text-[22px] font-semibold text-[#EDEBE6] leading-snug">
+          <p className="text-[24px] font-semibold text-[#EDEBE6] leading-snug">
             Made with love by Yazdan Basir
           </p>
-          <div className="flex flex-col gap-4 text-[16px] text-[#666560] leading-relaxed">
+          <div className="flex flex-col gap-4 text-[17px] text-[#666560] leading-relaxed">
             <p>
               I grew up loving football and hating finance. For me, they were the antithesis of each other. Football: tangible, visceral, and evident. Finance: intangible, murky, and entirely made up. Since graduating college, I have been working as a developer at a fintech company and I have, begrudgingly, had to come to terms with many financial concepts and instruments in order to succeed in the basic functions of my role (and avoid getting the sack).
             </p>
