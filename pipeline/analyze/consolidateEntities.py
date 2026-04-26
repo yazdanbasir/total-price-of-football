@@ -10,9 +10,12 @@ dataDir = Path(__file__).parent.parent / "data"
 cacheFile = dataDir / "embeddings_cache.pkl"
 
 EMBED_MODEL = "BAAI/bge-base-en-v1.5"
-CROSS_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
-AUTO_MERGE = 0.92
-GRAY_LOW = 0.78
+CROSS_MODEL = "cross-encoder/stsb-roberta-base"
+AUTO_MERGE_CONCEPT = 0.95
+AUTO_MERGE_PROFILE = 0.96
+GRAY_LOW = 0.88
+# stsb-roberta-base outputs 0–1 (sigmoid applied); ≥0.75 = strong semantic match
+CROSS_THRESHOLD = 0.75
 
 
 class UnionFind:
@@ -59,9 +62,52 @@ def embedBatch(model, texts, cache):
     return np.array([cache[t] for t in texts], dtype=np.float32)
 
 
+def _normStr(name):
+    s = name.lower()
+    s = re.sub(r"\s*\([^)]*\)", "", s)
+    s = s.replace("+", " plus ").replace("&", " and ")
+    s = re.sub(r"[^\w\s]", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
 def pairScore(nameA, nameB, cosine):
-    strSim = fuzz.token_sort_ratio(nameA.lower(), nameB.lower()) / 100.0
+    strSim = fuzz.token_sort_ratio(_normStr(nameA), _normStr(nameB)) / 100.0
     return max(float(cosine), strSim)
+
+
+_NAME_STOPWORDS = {
+    # Football suffixes
+    "fc", "afc", "cf", "sc", "ac", "if", "bk", "sk", "nk", "fk", "rfc",
+    # Generic org words
+    "club", "united", "city", "town", "rovers", "wanderers", "athletic",
+    "sports", "sport", "group", "holdings", "holding", "limited", "ltd",
+    "partners", "partnership", "capital", "fund", "investments", "investment",
+    "enterprises", "company", "association", "federation", "league", "national",
+    "professional", "players", "footballers", "foundation", "trust", "institute",
+    # Common articles / prepositions
+    "the", "of", "and", "de", "la", "le", "el", "al", "van", "den", "der",
+    # Geography that appears in multi-club cities / regions
+    "milan", "london", "madrid", "barcelona", "paris", "rome", "lisbon",
+    "prague", "vienna", "amsterdam", "manchester", "bristol", "birmingham",
+    "glasgow", "edinburgh", "brighton", "liverpool",
+}
+
+
+def shareNameToken(nameA, nameB):
+    tokensA = set(re.sub(r"[^\w\s]", "", nameA.lower()).split()) - _NAME_STOPWORDS
+    tokensB = set(re.sub(r"[^\w\s]", "", nameB.lower()).split()) - _NAME_STOPWORDS
+    return bool(tokensA & tokensB)
+
+
+def samePersonName(nameA, nameB):
+    tokA = nameA.strip().lower().split()
+    tokB = nameB.strip().lower().split()
+    if tokA[-1] != tokB[-1]:
+        return False
+    if len(tokA) >= 2 and len(tokB) >= 2 and tokA[0] != tokB[0]:
+        return False
+    return True
 
 
 def hasWomen(name):
@@ -106,7 +152,7 @@ def consolidateConcepts(concepts, embedModel, crossModel, cache):
     for i in range(n):
         for j in range(i + 1, n):
             score = pairScore(names[i], names[j], simMatrix[i, j])
-            if score >= AUTO_MERGE:
+            if score >= AUTO_MERGE_CONCEPT:
                 uf.union(names[i], names[j])
                 mergeLog.append({"a": names[i], "b": names[j], "score": round(score, 4), "method": "auto"})
             elif score >= GRAY_LOW:
@@ -117,7 +163,7 @@ def consolidateConcepts(concepts, embedModel, crossModel, cache):
         pairInputs = [(texts[i], texts[j]) for i, j, _ in grayPairs]
         ceScores = crossModel.predict(pairInputs, show_progress_bar=True)
         for (i, j, score), ceScore in zip(grayPairs, ceScores):
-            if float(ceScore) > 0:
+            if float(ceScore) >= CROSS_THRESHOLD:
                 uf.union(names[i], names[j])
                 mergeLog.append({
                     "a": names[i], "b": names[j],
@@ -167,19 +213,25 @@ def consolidateProfiles(profiles, embedModel, crossModel, cache):
                 continue
             if hasWomen(names[i]) != hasWomen(names[j]):
                 continue
+            isPerson = types[i] == "person"
+            if isPerson and not samePersonName(names[i], names[j]):
+                continue
             score = pairScore(names[i], names[j], simMatrix[i, j])
-            if score >= AUTO_MERGE:
+            if score >= AUTO_MERGE_PROFILE:
+                if not isPerson and not shareNameToken(names[i], names[j]):
+                    continue
                 uf.union(names[i], names[j])
                 mergeLog.append({"a": names[i], "b": names[j], "score": round(score, 4), "method": "auto"})
             elif score >= GRAY_LOW:
-                grayPairs.append((i, j, score))
+                if isPerson or shareNameToken(names[i], names[j]):
+                    grayPairs.append((i, j, score))
 
     if grayPairs and crossModel is not None:
         print(f"  Cross-encoder checking {len(grayPairs)} gray zone profile pairs...")
         pairInputs = [(texts[i], texts[j]) for i, j, _ in grayPairs]
         ceScores = crossModel.predict(pairInputs, show_progress_bar=True)
         for (i, j, score), ceScore in zip(grayPairs, ceScores):
-            if float(ceScore) > 0:
+            if float(ceScore) >= CROSS_THRESHOLD:
                 uf.union(names[i], names[j])
                 mergeLog.append({
                     "a": names[i], "b": names[j],
