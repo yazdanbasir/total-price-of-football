@@ -33,10 +33,10 @@ export default function AboutPage() {
               I grew up loving football and hating finance. For me, they were the antithesis of each other. Football: tangible, visceral, and evident. Finance: intangible, murky, and entirely made up. Since graduating college, I have been working as a developer at a fintech company and I have, begrudgingly, had to come to terms with many financial concepts and instruments in order to succeed in the basic functions of my role (and avoid getting the sack).
             </p>
             <p>
-              What has been remarkably refreshing is how digestible and tolerable Keiran and Kevin manage to make this mazy, labyrinthine industry. I have enjoyed every second of this podcast over the past few years that I have been a regular listener. And I look forward to each episode with the same enthusiasm because I am certain I will walk away with some knowledge gained and some nuances better understood.
+              What has been remarkably refreshing is how digestible and tolerable Kieran and Kevin manage to make this mazy, labyrinthine industry. I have enjoyed every second of this podcast over the past few years that I have been a regular listener. And I look forward to each episode with the same enthusiasm because I am certain I will walk away with some knowledge gained and some nuances better understood.
             </p>
             <p>
-              The inception of this project is three-fold. Firstly and most importantly, I simply wanted to make the knowledge covered on this magnificent podcast more accessible and searchable for all. This is my version of Keiran&apos;s spreadsheets for the many clubs he keeps track of. Secondly (and selfishly), I wanted to make sure I am truly learning and absorbing concepts as I go. I will be honest with you: I still do not understand much of what is discussed on the pod, partly due to having never taken an economics or finance class, partly due to my hesitation to open up to it fully. This website is a reference point for me; when Keiran brings up parachute payments, I can quickly look up what that is. Thirdly (and again somewhat selfishly), I am trying to learn how to work with modern AI tools and models. I have always wanted to do a project like this and thought I could give myself a little challenge this way.
+              The inception of this project is three-fold. Firstly and most importantly, I simply wanted to make the knowledge covered on this magnificent podcast more accessible and searchable for all. This is my version of Kieran&apos;s spreadsheets for the many clubs he keeps track of. Secondly (and selfishly), I wanted to make sure I am truly learning and absorbing concepts as I go. I will be honest with you: I still do not understand much of what is discussed on the pod, partly due to having never taken an economics or finance class, partly due to my hesitation to open up to it fully. This website is a reference point for me; when Kieran brings up parachute payments, I can quickly look up what that is. Thirdly (and again somewhat selfishly), I am trying to learn how to work with modern AI tools and models. I have always wanted to do a project like this and thought I could give myself a little challenge this way.
             </p>
             <p>
               The project is open source. The code and transcripts are available for all to peruse. If anyone is interested in helping me improve the quality of the project, feel free to drop an email if you are not a nerd like myself. And if you are, feel free to contribute to the repo and submit a Pull Request :)
@@ -45,15 +45,15 @@ export default function AboutPage() {
               <p className="text-[#EDEBE6] font-medium mb-2">Things I will be adding soon:</p>
               <ul className="list-disc list-inside flex flex-col gap-1">
                 <li>List-style episode summaries so fans/listeners can quickly glance which topics were covered when</li>
-                <li>A search/chatbot at the top where you can engage in simple interactions to look up definitions, terms, profiles, or the number of episodes Keiran and Kevin were interrupted by the postman.</li>
+                <li>A search/chatbot at the top where you can engage in simple interactions to look up definitions, terms, profiles, or the number of episodes Kieran and Kevin were interrupted by the postman.</li>
                 <li>Chronological history of terms and profiles. For example, the Chelsea entry would show a simple timeline of the stories covered on the podcast and major events like Abramovich&apos;s assets getting frozen or the sale of their women&apos;s team to themselves.</li>
               </ul>
             </div>
             <p>
-              Much love to Keiran and Kevin. Thank you for making the pod a joy to listen to. God bless you.
+              Much love to Kieran and Kevin. Thank you for making the pod a joy to listen to. God bless you.
             </p>
             <p>
-              Disclaimer: all knowledge and content on this site belongs entirely to Keiran Maguire and Kevin Day. I have not created any of it — I have only built the tools to surface it. This project is not monetised in any way and exists purely as a fan-made resource.
+              Disclaimer: all knowledge and content on this site belongs entirely to Kieran Maguire and Kevin Day. I have not created any of it — I have only built the tools to surface it. This project is not monetised in any way and exists purely as a fan-made resource.
             </p>
             <a
               href="https://github.com/yazdanbasir/total-price-of-football"
